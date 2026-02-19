@@ -1,0 +1,62 @@
+{
+  "0a53d50d37eeea0337b3b1341fbe250dc00731b00ca389c11e82d1b03d83ed65": {
+    "title": "Commercial Lease Agreement \u2013 Brightwell Dental, Suite 210",
+    "date": "18 February 2026",
+    "summary": "A commercial lease agreement between Stonegate Properties, LP (Landlord) and Brightwell Dental Associates, PLLC (Tenant) for approximately 3,400 square feet of office space at Suite 210, 1800 Brickell Avenue, Miami, Florida. The five-year lease runs from April 1, 2026 to March 31, 2031, with a starting monthly base rent of $11,900 increasing 3% annually, plus a $23,800 security deposit and an 8.7% proportionate share of operating expenses. The premises are designated solely for dental practice use, with maintenance responsibilities divided between Tenant (interior) and Landlord (structural and common areas).",
+    "filename": "commercial_lease_agreement.pdf"
+  },
+  "c771a28c60e8834566868760222cc22524231fa6e2ebcf75aee4a5ed9f855837": {
+    "title": "Executive Employment Agreement \u2013 Dr. Marcus A. Thornton",
+    "date": "18 February 2026",
+    "summary": "An executive employment agreement between Pinnacle Healthcare Systems, Inc. and Dr. Marcus A. Thornton appointing him as Chief Medical Officer with a base salary of $425,000 and a 40% target annual bonus, commencing March 1, 2026. The agreement outlines a three-year initial term with automatic renewal, severance provisions, and termination conditions. It also includes non-competition and non-solicitation restrictions for 12 months post-employment within a 100-mile radius of Company facilities, along with confidentiality and intellectual property obligations.",
+    "filename": "employment_agreement.pdf"
+  },
+  "e8225649701e442ab8dd886131be56660dc0e3a68939aef446baa21f20a6fa6d": {
+    "title": "Legal Bundle",
+    "date": "19 February 2026",
+    "summary": "",
+    "filename": "legal_bundle.pdf"
+  },
+  "2619a6a98289a8cf03ce76938481de69f051b3cbe36bc276a090adaf521a5e8b": {
+    "title": "Non-Disclosure Agreement \u2013 Hartwell & Meridian",
+    "date": "18 February 2026",
+    "summary": "A non-disclosure agreement between Hartwell Capital Group, LLC (Disclosing Party) and Meridian Advisory Partners, Inc. (Receiving Party) governing the protection and use of confidential business information shared for the purpose of evaluating a potential business relationship. The Receiving Party is obligated to maintain strict confidentiality, refrain from unauthorized disclosure or use, and return or destroy all confidential materials upon termination. The agreement has a three-year term, is governed by New York law, and requires binding arbitration for dispute resolution.",
+    "filename": "non_disclosure_agreement.pdf"
+  },
+  "3613712b76349f5090b8b6ebe5b70a277992dd698f558524c16a862110283bfc": {
+    "title": "Software License Agreement \u2013 DataSync Enterprise Suite",
+    "date": "18 February 2026",
+    "summary": "A software license agreement between Nexon Technologies, Inc. (Licensor) and Caldwell Manufacturing Solutions (Licensee) governing the use of DataSync Enterprise Suite version 4.2. The agreement grants a non-exclusive, non-transferable license for up to 50 workstations in exchange for an annual fee of $48,000, while imposing restrictions on modification, reverse engineering, and redistribution. It also disclaims all warranties and limits Licensor's cumulative liability to fees paid in the preceding twelve months.",
+    "filename": "software_license_agreement.pdf"
+  },
+  "08cd0c1746f1b76bb906d2349e7c3583fd451871316e6386475bfe39cf6b0026": {
+    "title": "Core Trial Bundle Index - February 2025",
+    "date": "19 February 2026",
+    "summary": "This is the Core Trial Bundle Index for a civil court case with a trial window of 12-20 February 2025, totalling 453 pages. It catalogues nine documents across two sections: Case Management Documents (including agreed case summary, chronology, list of issues, trial timetable, and reading list) and Statements of Case (including a claim form, amended particulars of claim, amended defence, and a defendant's request for further information under CPR Part 18). The statements of case span documents dated between January 2022 and September 2023.",
+    "filename": "Screenshot 2026-02-18 at 21.17.06.png"
+  },
+  "514a513b36d78ae6a93f836283266469dc40a82b19183595973aec6d4f59fec1": {
+    "title": "Court Bundle Index - Civil Litigation Case",
+    "date": "19 February 2026",
+    "summary": "This is page 2 of a 453-page court bundle index listing documents in a civil litigation matter. It includes pleadings, witness statements, court orders, schedules of loss, and skeleton arguments spanning from 2016 to 2025. The bundle covers both the original proceedings between Adaptainer and the Claimant, as well as a live application by the Defendant to strike out the Witness Statement of Paul Tilley.",
+    "filename": "Screenshot 2026-02-18 at 21.17.10.png"
+  },
+  "4cce4c01a69e05af2ca4ec6b1920ef83ccf30ebe565f902ccf0602d29e81149b": {
+    "title": "Litigant AI Weekly Report \u2013 21 to 27 Sep 2025",
+    "date": "27 September 2025",
+    "summary": "A consulting weekly report covering 16 billable hours of work on the Litigant AI project, including completion of a UK CaseLaw crawler downloading 67,000 cases (134,000 files, ~28-29 GB), statistical sampling validation of the dataset, and initial development of a UK Legislation crawler targeting 33,000 legislative documents. The report also outlines ongoing NLP preprocessing and ingestion work for CaseLaw cases into a database for integration with third-party LLM engines, with upcoming tasks including full deployment of the legislation crawler and cloud-based big data processing.",
+    "filename": "2025-09-21 - 2025-09-27 Windrose.Consulting - Litigant AI Weekly Report.pdf"
+  },
+  "072d335fcd176b506c84652a7bd942ac65b3bd821ed57dccc130643b66798af5": {
+    "title": "Litigant AI Weekly Report - OCR Development",
+    "date": "04 August 2025",
+    "summary": "A weekly progress report from Windrose Consulting covering work completed between August 4-6, 2025 on the Litigant AI project. The report details dataset review and selection of 627 scanned receipts and invoices for OCR testing, along with development of an OCR proof-of-concept using AWS Rekognition achieving 80-90% accuracy. Upcoming tasks include testing on actual scanned legal cases, digital PDF data extraction, and legal data cleaning and preparation for AI ingestion.",
+    "filename": "2025-08-04 - 2025-08-06 Windrose.Consulting - Litigant AI Weekly Report.pdf"
+  },
+  "697c61086e59f69e6f15db824c55dc71433b8611ac6f97de7a3f3537d3c9befc": {
+    "title": "Litigant AI Weekly Report \u2013 Oct 26\u201331 2025",
+    "date": "31 October 2025",
+    "summary": "A weekly consulting report from Windrose Consulting covering 16 billable R&D hours for the Litigant Legal Assistant AI project. It details progress on the LangChain and LangGraph multi-agent framework setup, PostgreSQL LitigantAIDB integration, and the Legal AI Assistant conversation flow development. The report includes a process flowchart, sprint board status, and notes that a first demo is expected the following week.",
+    "filename": "2025-10-26 - 2025-10-31 Windrose.Consulting - Litigant AI Weekly Report.pdf"
+  }
+}

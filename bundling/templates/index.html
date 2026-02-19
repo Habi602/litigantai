@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PDF Bundler</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --navy:   #1F3864;
+      --navy-l: #2a4d8f;
+      --grey:   #F2F2F2;
+      --border: #CCCCCC;
+      --red:    #c0392b;
+      --green:  #27ae60;
+      --text:   #222;
+    }
+
+    body {
+      font-family: Helvetica, Arial, sans-serif;
+      background: var(--grey);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2rem 1rem;
+    }
+
+    header {
+      background: var(--navy);
+      color: #fff;
+      width: 100%;
+      max-width: 720px;
+      border-radius: 6px 6px 0 0;
+      padding: 1.25rem 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    header svg { flex-shrink: 0; }
+    header h1 { font-size: 1.2rem; font-weight: 700; letter-spacing: 0.03em; }
+    header p  { font-size: 0.8rem; opacity: 0.75; margin-top: 2px; }
+
+    .card {
+      background: #fff;
+      width: 100%;
+      max-width: 720px;
+      border: 1px solid var(--border);
+      border-top: none;
+      border-radius: 0 0 6px 6px;
+      padding: 1.5rem;
+    }
+
+    /* ── Drop Zone ─────────────────────────────────────────────────────── */
+    #drop-zone {
+      border: 2px dashed var(--navy);
+      border-radius: 6px;
+      padding: 2.5rem 1rem;
+      text-align: center;
+      cursor: pointer;
+      transition: background 0.15s, border-color 0.15s;
+      user-select: none;
+    }
+    #drop-zone.over { background: #e8ecf5; border-color: var(--navy-l); }
+    #drop-zone svg  { color: var(--navy); margin-bottom: 0.5rem; }
+    #drop-zone p    { color: #555; font-size: 0.9rem; }
+    #drop-zone span { color: var(--navy); font-weight: 600; cursor: pointer; }
+    #drop-zone span:hover { text-decoration: underline; }
+    #file-input { display: none; }
+
+    /* ── Upload file list ──────────────────────────────────────────────── */
+    #file-list { margin-top: 1.25rem; display: flex; flex-direction: column; gap: 0.5rem; }
+
+    .file-row {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      background: var(--grey);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 0.5rem 0.75rem;
+      font-size: 0.875rem;
+    }
+    .file-name { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .file-size { flex-shrink: 0; color: #888; font-size: 0.78rem; }
+    .remove-btn {
+      flex-shrink: 0;
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: #999;
+      padding: 2px 4px;
+      border-radius: 3px;
+      line-height: 1;
+      font-size: 1rem;
+      transition: color 0.15s;
+    }
+    .remove-btn:hover { color: var(--red); }
+
+    /* ── Badges ────────────────────────────────────────────────────────── */
+    .badge {
+      flex-shrink: 0;
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      padding: 2px 6px;
+      border-radius: 3px;
+      text-transform: uppercase;
+      color: #fff;
+    }
+    .badge-pdf { background: var(--navy); }
+    .badge-img { background: #27ae60; }
+    .badge-txt { background: #8e44ad; }
+
+    /* ── Actions row ───────────────────────────────────────────────────── */
+    .actions {
+      margin-top: 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .btn-primary {
+      background: var(--navy);
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      padding: 0.6rem 1.4rem;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .btn-primary:hover:not(:disabled) { background: var(--navy-l); }
+    .btn-primary:disabled { opacity: 0.45; cursor: not-allowed; }
+
+    .btn-secondary {
+      background: #fff;
+      color: var(--navy);
+      border: 1.5px solid var(--navy);
+      border-radius: 4px;
+      padding: 0.55rem 1.2rem;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .btn-secondary:hover { background: #e8ecf5; }
+
+    .status {
+      font-size: 0.875rem;
+      color: #555;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+    .status.error   { color: var(--red); }
+    .status.success { color: var(--green); }
+
+    /* spinner */
+    .spinner {
+      width: 16px; height: 16px;
+      border: 2px solid #ccc;
+      border-top-color: var(--navy);
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      flex-shrink: 0;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .hint { margin-top: 1rem; font-size: 0.78rem; color: #888; text-align: center; }
+
+    /* ── Phase 2: Rationale card ───────────────────────────────────────── */
+    #rationale-card {
+      background: var(--navy);
+      color: #fff;
+      border-radius: 5px;
+      padding: 0.85rem 1.1rem;
+      font-size: 0.875rem;
+      line-height: 1.5;
+      margin-bottom: 1.25rem;
+    }
+    #rationale-card strong { display: block; font-size: 0.75rem; letter-spacing: 0.06em; text-transform: uppercase; opacity: 0.7; margin-bottom: 0.3rem; }
+
+    /* ── Phase 2: Order list ───────────────────────────────────────────── */
+    #order-list { display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 1.25rem; }
+
+    .order-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      background: var(--grey);
+      border: 1px solid var(--border);
+      border-radius: 5px;
+      padding: 0.65rem 0.85rem;
+      cursor: grab;
+      transition: box-shadow 0.15s, background 0.15s;
+      user-select: none;
+    }
+    .order-row:active { cursor: grabbing; }
+    .order-row.dragging { opacity: 0.4; }
+    .order-row.drag-over {
+      border-color: var(--navy);
+      background: #e8ecf5;
+      box-shadow: 0 0 0 2px var(--navy-l);
+    }
+
+    .drag-handle {
+      font-size: 1.1rem;
+      color: #bbb;
+      line-height: 1.4;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .row-num {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--navy);
+      width: 18px;
+      text-align: center;
+      flex-shrink: 0;
+      margin-top: 3px;
+    }
+
+    .doc-info { flex: 1; min-width: 0; }
+    .doc-title-line {
+      display: flex;
+      align-items: baseline;
+      gap: 0.6rem;
+      flex-wrap: wrap;
+    }
+    .doc-title { font-size: 0.9rem; font-weight: 700; }
+    .doc-date  { font-size: 0.78rem; color: #666; flex-shrink: 0; }
+    .doc-summary {
+      font-size: 0.8rem;
+      color: #666;
+      margin-top: 0.25rem;
+      line-height: 1.45;
+    }
+
+    .order-row .badge { margin-top: 2px; }
+
+    [hidden] { display: none !important; }
+  </style>
+</head>
+<body>
+
+<header>
+  <svg width="32" height="32" viewBox="0 0 24 24" fill="none"
+       stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+    <polyline points="14 2 14 8 20 8"/>
+    <line x1="16" y1="13" x2="8" y2="13"/>
+    <line x1="16" y1="17" x2="8" y2="17"/>
+    <polyline points="10 9 9 9 8 9"/>
+  </svg>
+  <div>
+    <h1>PDF Bundler</h1>
+    <p>Upload files — Claude analyzes and orders them — download a single indexed PDF</p>
+  </div>
+</header>
+
+<div class="card">
+
+  <!-- ── Phase 1: Upload ─────────────────────────────────────────────── -->
+  <div id="phase-upload">
+    <div id="drop-zone" role="button" tabindex="0" aria-label="Drop files here or click to browse">
+      <svg width="40" height="40" viewBox="0 0 24 24" fill="none"
+           stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="16 16 12 12 8 16"/>
+        <line x1="12" y1="12" x2="12" y2="21"/>
+        <path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/>
+      </svg>
+      <p>Drag &amp; drop files here, or <span id="browse-link">browse</span></p>
+    </div>
+    <input type="file" id="file-input" multiple
+           accept=".pdf,.jpg,.jpeg,.png,.gif,.webp,.txt,application/pdf,image/*,text/plain" />
+
+    <div id="file-list" aria-label="Selected files" aria-live="polite"></div>
+
+    <div class="actions">
+      <button id="analyze-btn" class="btn-primary" disabled>Analyze Documents</button>
+      <div id="status-upload" class="status"></div>
+    </div>
+
+    <p class="hint">Accepted: PDF · JPEG · PNG · GIF · WEBP · TXT</p>
+  </div>
+
+  <!-- ── Phase 2: Review & Bundle ────────────────────────────────────── -->
+  <div id="phase-review" hidden>
+    <div id="rationale-card" hidden>
+      <strong>Suggested Order</strong>
+      <span id="rationale-text"></span>
+    </div>
+
+    <div id="order-list" aria-label="Document order — drag rows to reorder"></div>
+
+    <input type="file" id="add-file-input" multiple
+           accept=".pdf,.jpg,.jpeg,.png,.gif,.webp,.txt,application/pdf,image/*,text/plain"
+           style="display:none" />
+
+    <div class="actions">
+      <button id="create-btn" class="btn-primary">Create Bundle</button>
+      <button id="new-files-btn" class="btn-secondary">Upload new file</button>
+      <div id="status-review" class="status"></div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  /* ── State ──────────────────────────────────────────────────────────── */
+  let uploadedFiles = new Map();   // key -> File, for Phase 1
+  let sessionId     = null;        // current session
+  let sessionDocs   = [];          // [{index, title, date, summary, filename, mime_type}]
+
+  /* ── Element refs ───────────────────────────────────────────────────── */
+  const phaseUpload   = document.getElementById("phase-upload");
+  const phaseReview   = document.getElementById("phase-review");
+  const dropZone      = document.getElementById("drop-zone");
+  const fileInput     = document.getElementById("file-input");
+  const browseLink    = document.getElementById("browse-link");
+  const fileList      = document.getElementById("file-list");
+  const analyzeBtn    = document.getElementById("analyze-btn");
+  const statusUpload  = document.getElementById("status-upload");
+  const rationaleCard = document.getElementById("rationale-card");
+  const rationaleText = document.getElementById("rationale-text");
+  const orderList     = document.getElementById("order-list");
+  const createBtn     = document.getElementById("create-btn");
+  const addFileInput  = document.getElementById("add-file-input");
+  const newFilesBtn   = document.getElementById("new-files-btn");
+  const statusReview  = document.getElementById("status-review");
+
+  /* ── Helpers ────────────────────────────────────────────────────────── */
+  function fmtSize(bytes) {
+    if (bytes < 1024)            return bytes + " B";
+    if (bytes < 1024 * 1024)     return (bytes / 1024).toFixed(1) + " KB";
+    return (bytes / 1024 / 1024).toFixed(1) + " MB";
+  }
+
+  function badgeInfo(mime) {
+    if (mime === "application/pdf") return ["PDF", "badge-pdf"];
+    if (mime.startsWith("image/"))  return ["IMG", "badge-img"];
+    return ["TXT", "badge-txt"];
+  }
+
+  function fileKey(f) { return f.name + "|" + f.size; }
+
+  function setUploadStatus(html, cls) {
+    statusUpload.className = "status " + (cls || "");
+    statusUpload.innerHTML = html;
+  }
+
+  function setReviewStatus(html, cls) {
+    statusReview.className = "status " + (cls || "");
+    statusReview.innerHTML = html;
+  }
+
+  /* ── Phase 1: file management ───────────────────────────────────────── */
+  function renderUploadList() {
+    fileList.innerHTML = "";
+    for (const [k, f] of uploadedFiles) {
+      const mime = f.type || "application/octet-stream";
+      const [label, cls] = badgeInfo(mime);
+      const row = document.createElement("div");
+      row.className = "file-row";
+      row.dataset.key = k;
+      row.innerHTML = `
+        <span class="badge ${cls}">${label}</span>
+        <span class="file-name" title="${f.name}">${f.name}</span>
+        <span class="file-size">${fmtSize(f.size)}</span>
+        <button class="remove-btn" aria-label="Remove ${f.name}" data-key="${k}">✕</button>
+      `;
+      fileList.appendChild(row);
+    }
+    analyzeBtn.disabled = uploadedFiles.size === 0;
+    if (uploadedFiles.size === 0) setUploadStatus("", "");
+  }
+
+  function addFiles(newFiles) {
+    const allowed = ["application/pdf","image/jpeg","image/png","image/gif","image/webp","text/plain"];
+    for (const f of newFiles) {
+      const mime = f.type || "application/octet-stream";
+      if (!allowed.includes(mime)) {
+        setUploadStatus(`⚠ Skipped unsupported file: ${f.name}`, "error");
+        continue;
+      }
+      uploadedFiles.set(fileKey(f), f);
+    }
+    renderUploadList();
+  }
+
+  /* ── Drop zone ───────────────────────────────────────────────────────── */
+  dropZone.addEventListener("dragover",  e => { e.preventDefault(); dropZone.classList.add("over"); });
+  dropZone.addEventListener("dragleave", ()  => dropZone.classList.remove("over"));
+  dropZone.addEventListener("drop", e => {
+    e.preventDefault();
+    dropZone.classList.remove("over");
+    addFiles(e.dataTransfer.files);
+  });
+  dropZone.addEventListener("click", () => fileInput.click());
+  dropZone.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") fileInput.click(); });
+  browseLink.addEventListener("click", e => { e.stopPropagation(); fileInput.click(); });
+  fileInput.addEventListener("change", () => { addFiles(fileInput.files); fileInput.value = ""; });
+
+  fileList.addEventListener("click", e => {
+    const btn = e.target.closest(".remove-btn");
+    if (!btn) return;
+    uploadedFiles.delete(btn.dataset.key);
+    renderUploadList();
+  });
+
+  /* ── Analyze ─────────────────────────────────────────────────────────── */
+  analyzeBtn.addEventListener("click", async () => {
+    if (uploadedFiles.size === 0) return;
+
+    analyzeBtn.disabled = true;
+    setUploadStatus('<span class="spinner"></span> Analyzing&hellip;');
+
+    const form = new FormData();
+    for (const f of uploadedFiles.values()) form.append("files", f);
+
+    try {
+      const res = await fetch("/analyze", { method: "POST", body: form });
+      const data = await res.json();
+
+      if (!res.ok) throw new Error(data.error || `Server error ${res.status}`);
+
+      sessionId   = data.session_id;
+      sessionDocs = data.docs;
+
+      renderReviewPhase(data);
+      phaseUpload.hidden = true;
+      phaseReview.hidden = false;
+
+    } catch (err) {
+      setUploadStatus("✕ " + err.message, "error");
+      analyzeBtn.disabled = uploadedFiles.size === 0;
+    }
+  });
+
+  /* ── Phase 2: render ─────────────────────────────────────────────────── */
+  function renderReviewPhase(data) {
+    // Rationale card
+    if (data.rationale) {
+      rationaleText.textContent = data.rationale;
+      rationaleCard.hidden = false;
+    } else {
+      rationaleCard.hidden = true;
+    }
+
+    // Build ordered rows
+    orderList.innerHTML = "";
+    const orderedDocs = data.order.map(i => data.docs[i]);
+    orderedDocs.forEach((doc, rowIdx) => {
+      orderList.appendChild(makeOrderRow(doc, rowIdx + 1));
+    });
+
+    setReviewStatus("", "");
+  }
+
+  function makeOrderRow(doc, rowNum) {
+    const [label, cls] = badgeInfo(doc.mime_type || "application/pdf");
+    const row = document.createElement("div");
+    row.className = "order-row";
+    row.draggable = true;
+    row.dataset.idx = doc.index;
+    row.innerHTML = `
+      <span class="drag-handle" aria-hidden="true">⠿</span>
+      <span class="row-num">${rowNum}</span>
+      <div class="doc-info">
+        <div class="doc-title-line">
+          <strong class="doc-title">${escHtml(doc.title)}</strong>
+          <span class="doc-date">${escHtml(doc.date)}</span>
+        </div>
+        ${doc.summary ? `<div class="doc-summary">${escHtml(doc.summary)}</div>` : ""}
+      </div>
+      <span class="badge ${cls}">${label}</span>
+    `;
+    addDragListeners(row);
+    return row;
+  }
+
+  function escHtml(str) {
+    return String(str)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;");
+  }
+
+  /* ── Drag-and-drop reordering ────────────────────────────────────────── */
+  let dragSrc = null;
+
+  function addDragListeners(row) {
+    row.addEventListener("dragstart", e => {
+      dragSrc = row;
+      e.dataTransfer.effectAllowed = "move";
+      // Small delay so the ghost image captures the non-dimmed state
+      setTimeout(() => row.classList.add("dragging"), 0);
+    });
+
+    row.addEventListener("dragend", () => {
+      dragSrc = null;
+      row.classList.remove("dragging");
+      document.querySelectorAll(".order-row").forEach(r => r.classList.remove("drag-over"));
+      updateRowNumbers();
+    });
+
+    row.addEventListener("dragover", e => {
+      e.preventDefault();
+      e.dataTransfer.dropEffect = "move";
+      if (dragSrc && dragSrc !== row) {
+        document.querySelectorAll(".order-row").forEach(r => r.classList.remove("drag-over"));
+        row.classList.add("drag-over");
+      }
+    });
+
+    row.addEventListener("dragleave", () => row.classList.remove("drag-over"));
+
+    row.addEventListener("drop", e => {
+      e.preventDefault();
+      row.classList.remove("drag-over");
+      if (!dragSrc || dragSrc === row) return;
+
+      const rows = [...orderList.querySelectorAll(".order-row")];
+      const srcIdx = rows.indexOf(dragSrc);
+      const tgtIdx = rows.indexOf(row);
+
+      if (srcIdx < tgtIdx) {
+        row.after(dragSrc);
+      } else {
+        row.before(dragSrc);
+      }
+      updateRowNumbers();
+    });
+  }
+
+  function updateRowNumbers() {
+    orderList.querySelectorAll(".order-row").forEach((row, i) => {
+      row.querySelector(".row-num").textContent = i + 1;
+    });
+  }
+
+  function getCurrentOrder() {
+    return [...orderList.querySelectorAll(".order-row")].map(r => parseInt(r.dataset.idx, 10));
+  }
+
+  /* ── Create Bundle ────────────────────────────────────────────────────── */
+  createBtn.addEventListener("click", async () => {
+    createBtn.disabled = true;
+    setReviewStatus('<span class="spinner"></span> Creating bundle&hellip;');
+
+    try {
+      const res = await fetch("/bundle", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ session_id: sessionId, order: getCurrentOrder() }),
+      });
+
+      if (!res.ok) {
+        const txt = await res.text();
+        throw new Error(txt || `Server error ${res.status}`);
+      }
+
+      // Derive filename from Content-Disposition or fall back
+      const disposition = res.headers.get("Content-Disposition") || "";
+      const match = disposition.match(/filename="?([^";\s]+)"?/);
+      const filename = match ? match[1] : "bundle.pdf";
+
+      const blob = await res.blob();
+      const url  = URL.createObjectURL(blob);
+      const a    = document.createElement("a");
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      setTimeout(() => URL.revokeObjectURL(url), 10000);
+
+      setReviewStatus("✓ Downloaded — reorder and create another, or upload new files", "success");
+
+    } catch (err) {
+      setReviewStatus("✕ " + err.message, "error");
+    } finally {
+      createBtn.disabled = false;
+    }
+  });
+
+  /* ── Upload new file ──────────────────────────────────────────────────── */
+  newFilesBtn.addEventListener("click", () => addFileInput.click());
+
+  addFileInput.addEventListener("change", async () => {
+    if (!addFileInput.files.length) return;
+
+    newFilesBtn.disabled = true;
+    createBtn.disabled   = true;
+    setReviewStatus('<span class="spinner"></span> Adding file&hellip;');
+
+    const form = new FormData();
+    form.append("session_id", sessionId);
+    for (const f of addFileInput.files) form.append("files", f);
+    addFileInput.value = "";
+
+    try {
+      const res  = await fetch("/add-files", { method: "POST", body: form });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || `Server error ${res.status}`);
+
+      sessionDocs = data.docs;
+      renderReviewPhase(data);
+    } catch (err) {
+      setReviewStatus("✕ " + err.message, "error");
+    } finally {
+      newFilesBtn.disabled = false;
+      createBtn.disabled   = false;
+    }
+  });
+</script>
+</body>
+</html>
