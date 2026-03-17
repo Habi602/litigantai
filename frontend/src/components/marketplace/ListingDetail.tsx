@@ -29,9 +29,9 @@ interface Props {
   isOwner: boolean;
   isMatched: boolean;
   hasExistingBid: boolean;
-  onSubmitBid: (data: BidCreate) => Promise<void>;
-  onAcceptBid: (bidId: number) => Promise<void>;
-  onWithdrawBid: (bidId: number) => Promise<void>;
+  onSubmitBid: (data: BidCreate) => Promise<unknown>;
+  onAcceptBid: (bidId: number) => Promise<unknown>;
+  onWithdrawBid: (bidId: number) => Promise<unknown>;
 }
 
 export function ListingDetail({

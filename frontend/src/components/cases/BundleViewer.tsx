@@ -19,8 +19,8 @@ interface BundleViewerProps {
     width: number;
     height: number;
     label?: string;
-  }) => Promise<void>;
-  onDeleteLink: (linkId: number) => Promise<void>;
+  }) => Promise<unknown>;
+  onDeleteLink: (linkId: number) => Promise<unknown>;
   onCreateHighlight: (data: {
     page_number: number;
     x: number;
@@ -28,11 +28,11 @@ interface BundleViewerProps {
     width: number;
     height: number;
     color: string;
-  }) => Promise<void>;
-  onDeleteHighlight: (highlightId: number) => Promise<void>;
-  onAddEvidence: (evidenceId: number) => Promise<void>;
-  onRemoveEvidence: (evidenceId: number) => Promise<void>;
-  onRegenerate: () => Promise<void>;
+  }) => Promise<unknown>;
+  onDeleteHighlight: (highlightId: number) => Promise<unknown>;
+  onAddEvidence: (evidenceId: number, position?: number) => Promise<unknown>;
+  onRemoveEvidence: (evidenceId: number) => Promise<unknown>;
+  onRegenerate: () => Promise<unknown>;
 }
 
 const HIGHLIGHT_COLORS = [

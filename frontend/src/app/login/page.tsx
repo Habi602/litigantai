@@ -142,6 +142,9 @@ function LoginForm() {
 
   const availableSubAreas = getSubAreas(mainAreas);
   const isLawyerSignup = activeRole === "lawyer" && tab === "signup";
+  // Non-narrowed copies for use inside the if(isLawyerSignup) block
+  const uiRole: "litigant" | "lawyer" = activeRole;
+  const uiTab: "signin" | "signup" = tab;
 
   // ── Shared UI pieces (card / light context) ────────────────────────────────
 
@@ -222,7 +225,7 @@ function LoginForm() {
                   type="button"
                   onClick={() => { setActiveRole("litigant"); resetSpecialistFields(); }}
                   className={`flex-1 py-2 text-sm font-medium rounded-full transition-colors ${
-                    activeRole === "litigant"
+                    uiRole === "litigant"
                       ? "bg-blue-700 text-white shadow-sm"
                       : "text-slate-400 hover:text-slate-200"
                   }`}
@@ -233,7 +236,7 @@ function LoginForm() {
                   type="button"
                   onClick={() => { setActiveRole("lawyer"); resetSpecialistFields(); }}
                   className={`flex-1 py-2 text-sm font-medium rounded-full transition-colors ${
-                    activeRole === "lawyer"
+                    uiRole === "lawyer"
                       ? "bg-blue-700 text-white shadow-sm"
                       : "text-slate-400 hover:text-slate-200"
                   }`}
@@ -248,7 +251,7 @@ function LoginForm() {
                   type="button"
                   onClick={() => setTab("signin")}
                   className={`flex-1 pb-3 text-sm font-medium transition-colors ${
-                    tab === "signin"
+                    uiTab === "signin"
                       ? "text-white border-b-2 border-blue-500"
                       : "text-slate-400 hover:text-slate-200"
                   }`}
@@ -259,7 +262,7 @@ function LoginForm() {
                   type="button"
                   onClick={() => setTab("signup")}
                   className={`flex-1 pb-3 text-sm font-medium transition-colors ${
-                    tab === "signup"
+                    uiTab === "signup"
                       ? "text-white border-b-2 border-blue-500"
                       : "text-slate-400 hover:text-slate-200"
                   }`}

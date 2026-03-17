@@ -51,7 +51,7 @@ export function EvidenceList({
   const handleAnalyze = async (id: number) => {
     setAnalyzingId(id);
     try {
-      await onAnalyze(id);
+      await onAnalyze?.(id);
     } finally {
       setAnalyzingId(null);
     }

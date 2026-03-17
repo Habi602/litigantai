@@ -13,8 +13,8 @@ interface Props {
   profile: SpecialistProfile | null;
   documents: SpecialistDocument[];
   onSave: (data: SpecialistProfileCreate) => Promise<void>;
-  onUploadDocument: (file: File, description?: string) => Promise<void>;
-  onDeleteDocument: (docId: number) => Promise<void>;
+  onUploadDocument: (file: File, description?: string) => Promise<unknown>;
+  onDeleteDocument: (docId: number) => Promise<unknown>;
   saving?: boolean;
 }
 
