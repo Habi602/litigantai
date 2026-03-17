@@ -38,7 +38,7 @@ export default function SpecialistBidsPage() {
           </p>
           <Link
             href="/specialist/opportunities"
-            className="inline-block mt-4 text-sm text-indigo-600 hover:text-indigo-700 font-medium"
+            className="inline-block mt-4 text-sm text-blue-700 hover:text-blue-800 font-medium"
           >
             Browse Opportunities
           </Link>

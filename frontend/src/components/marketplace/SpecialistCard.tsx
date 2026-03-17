@@ -77,7 +77,7 @@ export function SpecialistCard({ specialist }: Props) {
           {specialist.sub_areas.map((area) => (
             <span
               key={area}
-              className="px-2 py-0.5 text-xs bg-indigo-50 text-indigo-700 rounded-full"
+              className="px-2 py-0.5 text-xs bg-blue-50 text-blue-700 rounded-full"
             >
               {area}
             </span>

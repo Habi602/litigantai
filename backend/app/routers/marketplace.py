@@ -114,10 +114,17 @@ def my_matches(
 ):
     matches = (
         db.query(CaseMatch)
-        .filter(CaseMatch.specialist_id == current_user.id)
+        .join(MarketplaceListing, CaseMatch.listing_id == MarketplaceListing.id)
+        .filter(
+            CaseMatch.specialist_id == current_user.id,
+            MarketplaceListing.status.in_(["published", "matched"]),
+        )
         .order_by(CaseMatch.relevance_score.desc())
         .all()
     )
+    for match in matches:
+        match.notified = True
+    db.commit()
     results = []
     for match in matches:
         resp = CaseMatchResponse.model_validate(match)
@@ -125,6 +132,32 @@ def my_matches(
             resp.listing = MarketplaceListingResponse.model_validate(match.listing)
         results.append(resp)
     return results
+
+
+@router.get("/unread-match-count")
+def unread_match_count(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    count = (
+        db.query(CaseMatch)
+        .filter(CaseMatch.specialist_id == current_user.id, CaseMatch.notified == False)
+        .count()
+    )
+    return {"count": count}
+
+
+@router.get("/unread-accepted-count")
+def unread_accepted_count(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    count = (
+        db.query(Bid)
+        .filter(Bid.specialist_id == current_user.id, Bid.notified_accepted == False)
+        .count()
+    )
+    return {"count": count}
 
 
 @router.get("/my-bids", response_model=list[BidResponse])
@@ -138,6 +171,10 @@ def my_bids(
         .order_by(Bid.created_at.desc())
         .all()
     )
+    for bid in bids:
+        if bid.status == "accepted" and not bid.notified_accepted:
+            bid.notified_accepted = True
+    db.commit()
     return [_bid_to_response(b, db) for b in bids]
 
 
@@ -195,6 +232,8 @@ def list_bids(
     listing = db.query(MarketplaceListing).filter(MarketplaceListing.id == listing_id).first()
     if not listing:
         raise HTTPException(status_code=404, detail="Listing not found")
+    if listing.user_id != current_user.id:
+        raise HTTPException(status_code=403, detail="Not authorized to view bids for this listing")
 
     bids = (
         db.query(Bid)

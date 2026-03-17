@@ -44,3 +44,6 @@ class Case(Base):
     documents: Mapped[list["CaseDocument"]] = relationship(
         back_populates="case", cascade="all, delete-orphan"
     )
+    statement_of_claim: Mapped[Optional["StatementOfClaim"]] = relationship(
+        back_populates="case", uselist=False, cascade="all, delete-orphan"
+    )

@@ -20,14 +20,18 @@ export function CaseProgressBar({ steps, activeStep, onStepClick }: CaseProgress
         const isActive = step.key === activeStep;
         const isCompleted = step.completed;
         const prevCompleted = index > 0 && steps[index - 1].completed;
+        // locked if any prior step is incomplete
+        const isLocked = index > 0 && steps.slice(0, index).some((s) => !s.completed);
 
         const circleClass = isCompleted
-          ? "bg-indigo-700 text-white"
+          ? "bg-blue-800 text-white"
           : isActive
-          ? "bg-indigo-600 text-white"
+          ? "bg-blue-700 text-white"
+          : isLocked
+          ? "bg-gray-200 text-gray-400 cursor-not-allowed"
           : "bg-gray-300 text-gray-500";
 
-        const lineClass = prevCompleted ? "bg-indigo-600" : "bg-gray-200";
+        const lineClass = prevCompleted ? "bg-blue-700" : "bg-gray-200";
 
         return (
           <Fragment key={step.key}>
@@ -36,8 +40,9 @@ export function CaseProgressBar({ steps, activeStep, onStepClick }: CaseProgress
             )}
             <div className="flex flex-col items-center shrink-0">
               <button
-                onClick={() => onStepClick(step.key)}
-                className={`w-9 h-9 rounded-full flex items-center justify-center text-sm font-semibold transition-colors cursor-pointer z-10 ${circleClass}`}
+                onClick={() => !isLocked && onStepClick(step.key)}
+                disabled={isLocked}
+                className={`w-9 h-9 rounded-full flex items-center justify-center text-sm font-semibold transition-colors z-10 ${isLocked ? "cursor-not-allowed" : "cursor-pointer"} ${circleClass}`}
                 aria-label={`Step ${index + 1}: ${step.label}`}
               >
                 {isCompleted ? (
@@ -50,7 +55,7 @@ export function CaseProgressBar({ steps, activeStep, onStepClick }: CaseProgress
               </button>
               <span
                 className={`mt-2 text-xs font-medium whitespace-nowrap ${
-                  isActive ? "text-indigo-600" : isCompleted ? "text-indigo-700" : "text-gray-500"
+                  isActive ? "text-blue-700" : isCompleted ? "text-blue-800" : "text-gray-500"
                 }`}
               >
                 {step.label}

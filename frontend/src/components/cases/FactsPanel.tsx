@@ -51,7 +51,7 @@ function FactRow({ fact, onSave }: { fact: KeyFact; onSave: (id: number, text: s
           <div className="flex flex-col gap-2">
             <textarea
               autoFocus
-              className="w-full border border-indigo-300 rounded p-2 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none"
+              className="w-full border border-blue-300 rounded p-2 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
               value={text}
               rows={3}
               onChange={(e) => setText(e.target.value)}
@@ -61,7 +61,7 @@ function FactRow({ fact, onSave }: { fact: KeyFact; onSave: (id: number, text: s
               <button
                 onClick={handleSave}
                 disabled={saving}
-                className="text-xs px-3 py-1 bg-indigo-600 text-white rounded hover:bg-indigo-700 disabled:opacity-50"
+                className="text-xs px-3 py-1 bg-blue-700 text-white rounded hover:bg-blue-800 disabled:opacity-50"
               >
                 {saving ? "Saving…" : "Save"}
               </button>
@@ -84,7 +84,7 @@ function FactRow({ fact, onSave }: { fact: KeyFact; onSave: (id: number, text: s
       {!editing && (
         <button
           onClick={() => setEditing(true)}
-          className="text-gray-400 hover:text-indigo-600 transition-colors shrink-0 mt-0.5"
+          className="text-gray-400 hover:text-blue-700 transition-colors shrink-0 mt-0.5"
           title="Edit fact"
         >
           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>

@@ -91,8 +91,8 @@ export function LegalAnalysisPanel({ caseId }: LegalAnalysisPanelProps) {
           </h3>
           <div className="space-y-4">
             {analysis.relevant_case_law.map((cl, i) => (
-              <div key={i} className="border-l-2 border-indigo-200 pl-4">
-                <p className="text-sm font-medium text-indigo-700">
+              <div key={i} className="border-l-2 border-blue-200 pl-4">
+                <p className="text-sm font-medium text-blue-700">
                   {cl.citation}
                 </p>
                 <p className="text-xs text-gray-500 mt-0.5">{cl.relevance}</p>

@@ -25,6 +25,7 @@ export default function OpportunitiesPage() {
   const { matches, loading: matchesLoading } = useMyMatches();
   const { bids, loading: bidsLoading } = useMyBids();
   const [category, setCategory] = useState("all");
+  const [search, setSearch] = useState("");
 
   const matchMap = useMemo(() => {
     const map = new Map<number, number>();
@@ -43,12 +44,17 @@ export default function OpportunitiesPage() {
   }, [bids]);
 
   const filtered = useMemo(() => {
-    let result = listings.filter((l) => l.status === "published");
-    if (category !== "all") {
-      result = result.filter((l) => l.case_category === category);
-    }
-    return result;
-  }, [listings, category]);
+    return listings.filter((l) => {
+      if (l.status !== "published") return false;
+      if (matchMap.has(l.id)) return false;
+      if (category !== "all" && l.case_category !== category) return false;
+      if (search.trim()) {
+        const q = search.toLowerCase();
+        return l.title.toLowerCase().includes(q) || (l.redacted_summary?.toLowerCase().includes(q) ?? false);
+      }
+      return true;
+    });
+  }, [listings, matchMap, category, search]);
 
   const loading = listingsLoading || matchesLoading || bidsLoading;
 
@@ -61,11 +67,18 @@ export default function OpportunitiesPage() {
         </p>
       </div>
 
-      <div className="mb-6">
+      <div className="mb-6 flex items-center gap-3 flex-wrap">
+        <input
+          type="text"
+          placeholder="Search by keyword..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="text-sm border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 w-56"
+        />
         <select
           value={category}
           onChange={(e) => setCategory(e.target.value)}
-          className="text-sm border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          className="text-sm border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
         >
           {CATEGORIES.map((cat) => (
             <option key={cat} value={cat}>

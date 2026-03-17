@@ -1,10 +1,18 @@
-from fastapi import APIRouter, Depends, HTTPException
+import io
+from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi.responses import StreamingResponse
 from sqlalchemy.orm import Session
+from reportlab.lib.pagesizes import A4
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.lib.units import cm
+from reportlab.lib import colors
 from app.database import get_db
+from app.models.case import Case
 from app.models.user import User
 from app.models.statement_of_claim import StatementOfClaim
 from app.schemas.statement_of_claim import StatementOfClaimResponse, StatementOfClaimUpsert
-from app.services.auth import get_current_user
+from app.services.auth import get_current_user, get_user_from_token
 from app.services.collaboration_service import can_access_case
 from app.services import ai_service
 
@@ -67,3 +75,73 @@ def generate_statement(
     db.commit()
     db.refresh(stmt)
     return stmt
+
+
+@router.get("/{case_id}/statement-of-claim/pdf")
+def download_statement_pdf(
+    case_id: int,
+    token: str = Query(...),
+    db: Session = Depends(get_db),
+):
+    current_user = get_user_from_token(token, db)
+    _get_or_404(case_id, current_user, db)
+    stmt = db.query(StatementOfClaim).filter(StatementOfClaim.case_id == case_id).first()
+    if not stmt or not stmt.content:
+        raise HTTPException(status_code=404, detail="Statement of claim not found")
+
+    case = db.query(Case).filter(Case.id == case_id).first()
+    case_title = case.title if case else f"Case {case_id}"
+
+    buf = io.BytesIO()
+    doc = SimpleDocTemplate(
+        buf,
+        pagesize=A4,
+        leftMargin=2.5 * cm,
+        rightMargin=2.5 * cm,
+        topMargin=2.5 * cm,
+        bottomMargin=2.5 * cm,
+    )
+
+    styles = getSampleStyleSheet()
+    title_style = ParagraphStyle(
+        "ClaimTitle",
+        parent=styles["Heading1"],
+        fontSize=16,
+        fontName="Helvetica-Bold",
+        alignment=1,
+        spaceAfter=6,
+    )
+    subtitle_style = ParagraphStyle(
+        "ClaimSubtitle",
+        parent=styles["Normal"],
+        fontSize=11,
+        fontName="Helvetica-Oblique",
+        textColor=colors.grey,
+        alignment=1,
+        spaceAfter=20,
+    )
+    body_style = ParagraphStyle(
+        "ClaimBody",
+        parent=styles["Normal"],
+        fontSize=11,
+        leading=18,
+        spaceAfter=12,
+    )
+
+    story = [
+        Paragraph("STATEMENT OF CLAIM", title_style),
+        Paragraph(case_title, subtitle_style),
+    ]
+
+    for para in stmt.content.split("\n\n"):
+        para = para.strip()
+        if para:
+            story.append(Paragraph(para.replace("\n", "<br/>"), body_style))
+
+    doc.build(story)
+    buf.seek(0)
+    return StreamingResponse(
+        buf,
+        media_type="application/pdf",
+        headers={"Content-Disposition": 'attachment; filename="statement_of_claim.pdf"'},
+    )

@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.database import engine, Base
-from app.routers import auth, cases, evidence, timeline, bundles, specialists, marketplace, legal_analysis, collaboration, statement_of_claim
+from app.routers import auth, cases, evidence, timeline, bundles, specialists, marketplace, legal_analysis, collaboration, statement_of_claim, messages
 
 Base.metadata.create_all(bind=engine)
 
@@ -26,6 +26,7 @@ app.include_router(marketplace.router, prefix="/api/v1")
 app.include_router(legal_analysis.router, prefix="/api/v1")
 app.include_router(collaboration.router, prefix="/api/v1")
 app.include_router(statement_of_claim.router, prefix="/api/v1")
+app.include_router(messages.router, prefix="/api/v1")
 
 
 @app.get("/")

@@ -94,7 +94,7 @@ export function CollaborationPanel({ caseId }: CollaborationPanelProps) {
                 className="flex items-center justify-between py-2 border-b border-gray-100 last:border-0"
               >
                 <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 text-sm font-medium">
+                  <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-700 text-sm font-medium">
                     {c.user_name
                       .split(" ")
                       .map((n) => n[0])
@@ -124,13 +124,13 @@ export function CollaborationPanel({ caseId }: CollaborationPanelProps) {
             onChange={(e) => setNewNote(e.target.value)}
             placeholder="Add a note..."
             rows={3}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           />
           <div className="flex items-center gap-2">
             <select
               value={noteType}
               onChange={(e) => setNoteType(e.target.value)}
-              className="text-sm border border-gray-300 rounded-lg px-2 py-1.5 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="text-sm border border-gray-300 rounded-lg px-2 py-1.5 focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="note">Note</option>
               <option value="question">Question</option>
@@ -181,7 +181,7 @@ export function CollaborationPanel({ caseId }: CollaborationPanelProps) {
                         setEditingId(note.id);
                         setEditContent(note.content);
                       }}
-                      className="text-xs text-gray-400 hover:text-indigo-600 ml-2"
+                      className="text-xs text-gray-400 hover:text-blue-700 ml-2"
                     >
                       Edit
                     </button>
@@ -202,7 +202,7 @@ export function CollaborationPanel({ caseId }: CollaborationPanelProps) {
                       value={editContent}
                       onChange={(e) => setEditContent(e.target.value)}
                       rows={2}
-                      className="w-full px-2 py-1.5 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                      className="w-full px-2 py-1.5 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                     <div className="flex gap-2">
                       <Button
@@ -238,7 +238,7 @@ export function CollaborationPanel({ caseId }: CollaborationPanelProps) {
         </h3>
 
         <div className="mb-3">
-          <label className="inline-flex items-center gap-2 cursor-pointer text-sm text-indigo-600 hover:text-indigo-700">
+          <label className="inline-flex items-center gap-2 cursor-pointer text-sm text-blue-700 hover:text-blue-800">
             <input
               type="file"
               className="hidden"

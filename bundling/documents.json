@@ -58,5 +58,17 @@
     "date": "31 October 2025",
     "summary": "A weekly consulting report from Windrose Consulting covering 16 billable R&D hours for the Litigant Legal Assistant AI project. It details progress on the LangChain and LangGraph multi-agent framework setup, PostgreSQL LitigantAIDB integration, and the Legal AI Assistant conversation flow development. The report includes a process flowchart, sprint board status, and notes that a first demo is expected the following week.",
     "filename": "2025-10-26 - 2025-10-31 Windrose.Consulting - Litigant AI Weekly Report.pdf"
+  },
+  "d0c9e0a66ce30d1b8b01919b6c9cfabb41f5fad12a3fb1e30da47133b3e4c920": {
+    "title": "Settlement Agreement and Mutual Release",
+    "date": "18 February 2026",
+    "summary": "A settlement agreement between Greenfield Construction Corp. (Claimant) and Vantage Commercial Builders, LLC (Respondent) resolving a construction subcontract dispute related to a commercial office complex in Columbus, Ohio. Respondent agrees to pay $275,000 in structured installments, and both parties mutually release all claims arising from the subcontract and project. The agreement also provides for dismissal of an existing AAA arbitration proceeding, along with non-disparagement and confidentiality obligations.",
+    "filename": "settlement_agreement.pdf"
+  },
+  "9b01e9207510c8e1121a58f034df16a9e3fd1ba8d56b2fb7606b27c8e0d55d0f": {
+    "title": "Schedule Of Loss   Bundle Of Evidence",
+    "date": "11 March 2026",
+    "summary": "",
+    "filename": "Schedule of Loss - Bundle of Evidence.pdf"
   }
 }

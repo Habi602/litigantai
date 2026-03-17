@@ -28,7 +28,7 @@ function SpecialistLayout({ children }: { children: React.ReactNode }) {
   if (!user) return null;
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-slate-50">
       <SpecialistSidebar />
       <div className="ml-64">
         <SpecialistHeader />

@@ -74,7 +74,7 @@ export default function EvidenceDetailPage() {
       <div className="mb-6">
         <Link
           href={`/cases/${caseId}`}
-          className="text-sm text-indigo-600 hover:underline"
+          className="text-sm text-blue-700 hover:underline"
         >
           &larr; Back to Case
         </Link>

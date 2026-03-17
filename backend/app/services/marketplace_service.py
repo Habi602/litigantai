@@ -193,6 +193,11 @@ def submit_bid(db: Session, listing_id: int, specialist_id: int, data: dict) -> 
     if not match:
         raise ValueError("You are not matched to this listing")
 
+    # Require a complete specialist profile before bidding
+    profile = db.query(SpecialistProfile).filter(SpecialistProfile.user_id == specialist_id).first()
+    if not profile or not profile.bio.strip() or not profile.practice_areas:
+        raise ValueError("Please complete your profile (bio and practice areas) before bidding")
+
     # Check for existing bid
     existing_bid = (
         db.query(Bid)
@@ -235,6 +240,7 @@ def accept_bid(db: Session, bid_id: int, user_id: int) -> Bid:
         raise ValueError("A bid has already been accepted for this listing")
 
     bid.status = "accepted"
+    bid.notified_accepted = False
 
     # Grant specialist access as a collaborator
     collaborator = CaseCollaborator(

@@ -6,7 +6,7 @@ import { MarketplaceListingEnriched } from "@/lib/types";
 const statusColors: Record<string, string> = {
   published: "bg-green-100 text-green-800",
   matched: "bg-blue-100 text-blue-800",
-  accepted: "bg-indigo-100 text-indigo-800",
+  accepted: "bg-blue-100 text-blue-800",
   closed: "bg-gray-100 text-gray-800",
 };
 
@@ -15,7 +15,7 @@ export function EnrichedListingCard({ listing }: { listing: MarketplaceListingEn
 
   return (
     <Link
-      href={`/cases/${listing.case_id}`}
+      href={`/marketplace/${listing.id}`}
       className="block bg-white rounded-xl border border-gray-200 p-5 hover:shadow-md transition-shadow"
     >
       <div className="flex items-start justify-between gap-4">
@@ -31,11 +31,11 @@ export function EnrichedListingCard({ listing }: { listing: MarketplaceListingEn
       </div>
 
       {listing.accepted_bid && (
-        <div className="mt-4 bg-indigo-50 rounded-lg p-3">
-          <p className="text-sm font-medium text-indigo-900">
+        <div className="mt-4 bg-blue-50 rounded-lg p-3">
+          <p className="text-sm font-medium text-blue-900">
             {listing.accepted_bid.specialist_name}
           </p>
-          <div className="flex items-center gap-4 mt-1 text-xs text-indigo-700">
+          <div className="flex items-center gap-4 mt-1 text-xs text-blue-700">
             {listing.accepted_bid.estimated_hours != null && (
               <span>{listing.accepted_bid.estimated_hours}h estimated</span>
             )}

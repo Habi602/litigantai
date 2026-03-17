@@ -12,7 +12,7 @@ export function SpecialistHeader() {
       <div className="flex items-center gap-4">
         <Link
           href="/cases"
-          className="text-sm text-indigo-600 hover:text-indigo-700 transition-colors"
+          className="text-sm text-blue-600 hover:text-blue-700 transition-colors"
         >
           Switch to Litigant
         </Link>

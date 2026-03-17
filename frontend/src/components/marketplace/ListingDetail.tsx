@@ -1,11 +1,13 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { BidCard } from "./BidCard";
 import { MarketplaceListing, Bid, BidCreate } from "@/lib/types";
+import { useStartConversation } from "@/hooks/useMessages";
 
 const categoryColors: Record<string, "blue" | "green" | "yellow" | "red" | "gray"> = {
   contract: "blue",
@@ -42,7 +44,10 @@ export function ListingDetail({
   onAcceptBid,
   onWithdrawBid,
 }: Props) {
+  const router = useRouter();
+  const { startConversation } = useStartConversation();
   const [showBidForm, setShowBidForm] = useState(false);
+  const [sortBy, setSortBy] = useState<"date" | "price" | "hours">("date");
   const [submitting, setSubmitting] = useState(false);
   const [accepting, setAccepting] = useState(false);
   const [message, setMessage] = useState("");
@@ -71,6 +76,12 @@ export function ListingDetail({
     } finally {
       setSubmitting(false);
     }
+  };
+
+  const handleMessage = async (recipientId: number) => {
+    const conv = await startConversation({ recipient_id: recipientId, listing_id: listing.id });
+    const isSpecialist = window.location.pathname.startsWith("/specialist");
+    router.push(`${isSpecialist ? "/specialist" : ""}/messages?conv=${conv.id}`);
   };
 
   const handleAccept = async (bidId: number) => {
@@ -124,6 +135,15 @@ export function ListingDetail({
         </div>
       </Card>
 
+      {/* Message button for matched specialists */}
+      {!isOwner && isMatched && (
+        <Card className="p-4">
+          <Button variant="secondary" onClick={() => handleMessage(listing.user_id)}>
+            Message Listing Owner
+          </Button>
+        </Card>
+      )}
+
       {/* Bid Form for matched specialists */}
       {!isOwner && isMatched && !hasExistingBid && listing.status !== "accepted" && listing.status !== "closed" && (
         <Card className="p-6">
@@ -146,7 +166,7 @@ export function ListingDetail({
                   placeholder="Describe your interest and approach..."
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
 
@@ -158,7 +178,7 @@ export function ListingDetail({
                   <select
                     value={priceStructure}
                     onChange={(e) => setPriceStructure(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                   >
                     <option value="hourly">Hourly</option>
                     <option value="fixed">Fixed Fee</option>
@@ -176,7 +196,7 @@ export function ListingDetail({
                     required
                     value={estimatedAmount}
                     onChange={(e) => setEstimatedAmount(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
                 <div>
@@ -190,7 +210,7 @@ export function ListingDetail({
                     placeholder="Optional"
                     value={estimatedHours}
                     onChange={(e) => setEstimatedHours(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
               </div>
@@ -215,17 +235,35 @@ export function ListingDetail({
       {/* Bids List */}
       {bids.length > 0 && (
         <div>
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">
-            Bids ({bids.length})
-          </h2>
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg font-semibold text-gray-900">
+              Bids ({bids.length})
+            </h2>
+            {isOwner && bids.length > 1 && (
+              <select
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value as "date" | "price" | "hours")}
+                className="text-sm border border-gray-300 rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="date">Sort by date</option>
+                <option value="price">Sort by price</option>
+                <option value="hours">Sort by hours</option>
+              </select>
+            )}
+          </div>
           <div className="space-y-3">
-            {bids.map((bid) => (
+            {[...bids].sort((a, b) => {
+              if (sortBy === "price") return a.estimated_amount - b.estimated_amount;
+              if (sortBy === "hours") return (a.estimated_hours ?? Infinity) - (b.estimated_hours ?? Infinity);
+              return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+            }).map((bid) => (
               <BidCard
                 key={bid.id}
                 bid={bid}
                 isOwner={isOwner}
                 onAccept={isOwner ? handleAccept : undefined}
                 onWithdraw={!isOwner ? onWithdrawBid : undefined}
+                onMessage={isOwner ? () => handleMessage(bid.specialist_id) : undefined}
                 accepting={accepting}
               />
             ))}

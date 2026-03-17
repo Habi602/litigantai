@@ -21,13 +21,14 @@ from app.schemas.bundle import (
     BundleLinkCreate,
     BundleLinkResponse,
     BundleRemoveEvidence,
+    BundleReorderRequest,
     BundleResponse,
     ProposeOrderDoc,
     ProposeOrderRequest,
     ProposeOrderResponse,
 )
 from app.services import bundle_service
-from app.services.auth import get_current_user
+from app.services.auth import get_current_user, get_user_from_token
 
 router = APIRouter(prefix="/cases/{case_id}/bundles", tags=["bundles"])
 
@@ -104,6 +105,32 @@ def delete_bundle(
     db.commit()
 
 
+@router.post("/{bundle_id}/ai-reorder", response_model=BundleResponse)
+def ai_reorder_bundle(
+    case_id: int,
+    bundle_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    bundle = _get_bundle(case_id, bundle_id, current_user, db)
+    try:
+        return bundle_service.ai_reorder_bundle(db, bundle)
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+
+@router.post("/{bundle_id}/reorder", response_model=BundleResponse)
+def reorder_bundle(
+    case_id: int,
+    bundle_id: int,
+    payload: BundleReorderRequest,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    bundle = _get_bundle(case_id, bundle_id, current_user, db)
+    return bundle_service.reorder_bundle(db, bundle, payload.evidence_ids)
+
+
 @router.post("/{bundle_id}/evidence", response_model=BundleResponse)
 def add_evidence(
     case_id: int,
@@ -144,15 +171,17 @@ def get_bundle_file(
     bundle_id: int,
     token: str = Query(default=None),
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user),
 ):
+    if not token:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Not authenticated")
+    current_user = get_user_from_token(token, db)
     bundle = _get_bundle(case_id, bundle_id, current_user, db)
     if not bundle.file_path or not os.path.exists(bundle.file_path):
         raise HTTPException(status_code=404, detail="Bundle PDF not found")
     return FileResponse(
         bundle.file_path,
         media_type="application/pdf",
-        filename=f"{bundle.title}.pdf",
+        headers={"Content-Disposition": f'inline; filename="{bundle.title}.pdf"'},
     )
 
 

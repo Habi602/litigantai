@@ -42,7 +42,7 @@ export function PublishToMarketplace({ caseId, hasAnalyzedEvidence, existingList
         <Badge variant="green">Published to Marketplace</Badge>
         <a
           href={`/marketplace/${listing.id}`}
-          className="text-sm text-indigo-600 hover:text-indigo-800"
+          className="text-sm text-blue-700 hover:text-blue-900"
         >
           View Listing
         </a>

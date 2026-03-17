@@ -17,10 +17,11 @@ interface Props {
   isOwner?: boolean;
   onAccept?: (bidId: number) => void;
   onWithdraw?: (bidId: number) => void;
+  onMessage?: () => void;
   accepting?: boolean;
 }
 
-export function BidCard({ bid, isOwner, onAccept, onWithdraw, accepting }: Props) {
+export function BidCard({ bid, isOwner, onAccept, onWithdraw, onMessage, accepting }: Props) {
   return (
     <Card className="p-5">
       <div className="flex items-start justify-between mb-3">
@@ -68,6 +69,11 @@ export function BidCard({ bid, isOwner, onAccept, onWithdraw, accepting }: Props
         {isOwner && bid.status === "pending" && onAccept && (
           <Button size="sm" onClick={() => onAccept(bid.id)} disabled={accepting}>
             {accepting ? "Accepting..." : "Accept Bid"}
+          </Button>
+        )}
+        {isOwner && onMessage && (
+          <Button size="sm" variant="ghost" onClick={onMessage}>
+            Message
           </Button>
         )}
         {!isOwner && bid.status === "pending" && onWithdraw && (

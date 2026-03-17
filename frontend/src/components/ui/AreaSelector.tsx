@@ -43,7 +43,7 @@ export function AreaSelector({
         {label}
       </label>
 
-      <div className="border border-gray-300 rounded-lg overflow-hidden focus-within:ring-2 focus-within:ring-indigo-500 focus-within:border-indigo-500">
+      <div className="border border-gray-300 rounded-lg overflow-hidden focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500">
         {/* Search input */}
         <div className="flex items-center gap-2 px-3 py-2 border-b border-gray-200 bg-white">
           <svg
@@ -84,14 +84,14 @@ export function AreaSelector({
                   onClick={() => toggle(area)}
                   className={`w-full flex items-center gap-2.5 px-3 py-2 text-sm text-left transition-colors ${
                     isSelected
-                      ? "bg-indigo-50 text-indigo-800"
+                      ? "bg-blue-50 text-blue-800"
                       : "text-gray-700 hover:bg-gray-50"
                   }`}
                 >
                   <span
                     className={`w-4 h-4 shrink-0 flex items-center justify-center rounded text-xs font-bold ${
                       isSelected
-                        ? "text-indigo-600"
+                        ? "text-blue-600"
                         : "text-gray-300"
                     }`}
                   >
@@ -111,13 +111,13 @@ export function AreaSelector({
           {selected.map((area) => (
             <span
               key={area}
-              className="inline-flex items-center gap-1 px-2.5 py-0.5 bg-indigo-100 text-indigo-800 rounded-full text-xs font-medium"
+              className="inline-flex items-center gap-1 px-2.5 py-0.5 bg-blue-100 text-blue-800 rounded-full text-xs font-medium"
             >
               {area}
               <button
                 type="button"
                 onClick={() => remove(area)}
-                className="hover:text-indigo-600 font-bold leading-none"
+                className="hover:text-blue-600 font-bold leading-none"
                 aria-label={`Remove ${area}`}
               >
                 ×

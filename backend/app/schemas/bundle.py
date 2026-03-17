@@ -19,6 +19,10 @@ class BundleRemoveEvidence(BaseModel):
     evidence_id: int
 
 
+class BundleReorderRequest(BaseModel):
+    evidence_ids: list[int]
+
+
 class BundleLinkCreate(BaseModel):
     source_page: int
     target_page: int
@@ -86,6 +90,7 @@ class BundleResponse(BaseModel):
     id: int
     case_id: int
     title: str
+    version: int
     status: str
     file_path: Optional[str]
     file_size: int

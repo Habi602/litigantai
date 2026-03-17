@@ -103,7 +103,8 @@ function LoginForm() {
     setError("");
     setLoading(true);
     try {
-      await register(username, password, fullName);
+      const registrationUsername = activeRole === "lawyer" ? username : fullName;
+      await register(registrationUsername, password, fullName);
 
       if (activeRole === "lawyer") {
         const profileData: SpecialistProfileCreate = {
@@ -151,7 +152,7 @@ function LoginForm() {
         onClick={() => { setActiveRole("litigant"); resetSpecialistFields(); }}
         className={`flex-1 py-2 text-sm font-medium rounded-full transition-colors ${
           activeRole === "litigant"
-            ? "bg-white text-indigo-600 shadow-sm"
+            ? "bg-white text-blue-700 shadow-sm"
             : "text-gray-500 hover:text-gray-700"
         }`}
       >
@@ -162,7 +163,7 @@ function LoginForm() {
         onClick={() => { setActiveRole("lawyer"); resetSpecialistFields(); }}
         className={`flex-1 py-2 text-sm font-medium rounded-full transition-colors ${
           activeRole === "lawyer"
-            ? "bg-white text-indigo-600 shadow-sm"
+            ? "bg-white text-blue-700 shadow-sm"
             : "text-gray-500 hover:text-gray-700"
         }`}
       >
@@ -178,7 +179,7 @@ function LoginForm() {
         onClick={() => setTab("signin")}
         className={`flex-1 pb-3 text-sm font-medium transition-colors ${
           tab === "signin"
-            ? "text-indigo-600 border-b-2 border-indigo-600"
+            ? "text-blue-700 border-b-2 border-blue-700"
             : "text-gray-500 hover:text-gray-700"
         }`}
       >
@@ -189,7 +190,7 @@ function LoginForm() {
         onClick={() => setTab("signup")}
         className={`flex-1 pb-3 text-sm font-medium transition-colors ${
           tab === "signup"
-            ? "text-indigo-600 border-b-2 border-indigo-600"
+            ? "text-blue-700 border-b-2 border-blue-700"
             : "text-gray-500 hover:text-gray-700"
         }`}
       >
@@ -222,7 +223,7 @@ function LoginForm() {
                   onClick={() => { setActiveRole("litigant"); resetSpecialistFields(); }}
                   className={`flex-1 py-2 text-sm font-medium rounded-full transition-colors ${
                     activeRole === "litigant"
-                      ? "bg-indigo-600 text-white shadow-sm"
+                      ? "bg-blue-700 text-white shadow-sm"
                       : "text-slate-400 hover:text-slate-200"
                   }`}
                 >
@@ -233,7 +234,7 @@ function LoginForm() {
                   onClick={() => { setActiveRole("lawyer"); resetSpecialistFields(); }}
                   className={`flex-1 py-2 text-sm font-medium rounded-full transition-colors ${
                     activeRole === "lawyer"
-                      ? "bg-indigo-600 text-white shadow-sm"
+                      ? "bg-blue-700 text-white shadow-sm"
                       : "text-slate-400 hover:text-slate-200"
                   }`}
                 >
@@ -248,7 +249,7 @@ function LoginForm() {
                   onClick={() => setTab("signin")}
                   className={`flex-1 pb-3 text-sm font-medium transition-colors ${
                     tab === "signin"
-                      ? "text-white border-b-2 border-indigo-500"
+                      ? "text-white border-b-2 border-blue-500"
                       : "text-slate-400 hover:text-slate-200"
                   }`}
                 >
@@ -259,7 +260,7 @@ function LoginForm() {
                   onClick={() => setTab("signup")}
                   className={`flex-1 pb-3 text-sm font-medium transition-colors ${
                     tab === "signup"
-                      ? "text-white border-b-2 border-indigo-500"
+                      ? "text-white border-b-2 border-blue-500"
                       : "text-slate-400 hover:text-slate-200"
                   }`}
                 >
@@ -278,7 +279,7 @@ function LoginForm() {
               <div>
                 <label className="block text-sm font-medium text-slate-300 mb-1">Full Name</label>
                 <input
-                  className="w-full bg-slate-800 border border-slate-600 text-white rounded-lg px-3 py-2 text-sm placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                  className="w-full bg-slate-800 border border-slate-600 text-white rounded-lg px-3 py-2 text-sm placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
                   placeholder="Your full name"
@@ -288,7 +289,7 @@ function LoginForm() {
               <div>
                 <label className="block text-sm font-medium text-slate-300 mb-1">Username</label>
                 <input
-                  className="w-full bg-slate-800 border border-slate-600 text-white rounded-lg px-3 py-2 text-sm placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                  className="w-full bg-slate-800 border border-slate-600 text-white rounded-lg px-3 py-2 text-sm placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
                   placeholder="Pick a username"
@@ -299,7 +300,7 @@ function LoginForm() {
                 <label className="block text-sm font-medium text-slate-300 mb-1">Password</label>
                 <input
                   type="password"
-                  className="w-full bg-slate-800 border border-slate-600 text-white rounded-lg px-3 py-2 text-sm placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                  className="w-full bg-slate-800 border border-slate-600 text-white rounded-lg px-3 py-2 text-sm placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="Choose a strong password"
@@ -312,7 +313,7 @@ function LoginForm() {
             <div className="mt-auto pt-8 space-y-3">
               <Button
                 type="submit"
-                className="w-full bg-indigo-600 hover:bg-indigo-500 focus:ring-indigo-500"
+                className="w-full bg-blue-700 hover:bg-blue-600 focus:ring-blue-500"
                 disabled={loading || mainAreas.length === 0}
               >
                 {loading ? "Creating account..." : "Create Account"}
@@ -322,7 +323,7 @@ function LoginForm() {
                 <button
                   type="button"
                   onClick={() => setTab("signin")}
-                  className="text-indigo-400 hover:text-indigo-300 font-medium"
+                  className="text-blue-400 hover:text-blue-300 font-medium"
                 >
                   Sign in
                 </button>
@@ -377,7 +378,7 @@ function LoginForm() {
                         addCustomArea();
                       }
                     }}
-                    className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                   <button
                     type="button"
@@ -422,7 +423,7 @@ function LoginForm() {
                     onChange={(e) =>
                       setYearsExperience(parseInt(e.target.value) || 0)
                     }
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
                 <div>
@@ -436,7 +437,7 @@ function LoginForm() {
                     placeholder="e.g. 250.00"
                     value={hourlyRate}
                     onChange={(e) => setHourlyRate(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
               </div>
@@ -451,7 +452,7 @@ function LoginForm() {
                     placeholder="Optional"
                     value={barNumber}
                     onChange={(e) => setBarNumber(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
                 <div>
@@ -464,7 +465,7 @@ function LoginForm() {
                     value={jurisdiction}
                     onChange={(e) => setJurisdiction(e.target.value)}
                     required
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
               </div>
@@ -481,7 +482,7 @@ function LoginForm() {
                   value={bio}
                   onChange={(e) => setBio(e.target.value)}
                   required
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
 
@@ -494,7 +495,7 @@ function LoginForm() {
                   placeholder="https://linkedin.com/in/..."
                   value={linkedinUrl}
                   onChange={(e) => setLinkedinUrl(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
 
@@ -504,7 +505,7 @@ function LoginForm() {
                 <select
                   value={availability}
                   onChange={(e) => setAvailability(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
                   {AVAILABILITY_OPTIONS.map((opt) => (
                     <option key={opt} value={opt}>
@@ -547,10 +548,10 @@ function LoginForm() {
           {tab === "signin" ? (
             <form onSubmit={handleSignIn} className="space-y-4">
               <Input
-                label="Username"
+                label={activeRole === "litigant" ? "Full Name" : "Username"}
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                placeholder="Enter your username"
+                placeholder={activeRole === "litigant" ? "Enter your full name" : "Enter your username"}
                 required
               />
               <Input
@@ -569,7 +570,7 @@ function LoginForm() {
                 <button
                   type="button"
                   onClick={() => setTab("signup")}
-                  className="text-indigo-600 hover:underline font-medium"
+                  className="text-blue-700 hover:underline font-medium"
                 >
                   Sign up
                 </button>
@@ -583,13 +584,6 @@ function LoginForm() {
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
                 placeholder="Enter your full name"
-                required
-              />
-              <Input
-                label="Username"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                placeholder="Choose a username"
                 required
               />
               <Input
@@ -608,7 +602,7 @@ function LoginForm() {
                 <button
                   type="button"
                   onClick={() => setTab("signin")}
-                  className="text-indigo-600 hover:underline font-medium"
+                  className="text-blue-700 hover:underline font-medium"
                 >
                   Sign in
                 </button>

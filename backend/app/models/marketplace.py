@@ -96,6 +96,7 @@ class Bid(Base):
     estimated_amount: Mapped[float] = mapped_column(Float, default=0.0)
     estimated_hours: Mapped[Optional[float]] = mapped_column(Float, nullable=True)
     status: Mapped[str] = mapped_column(String(20), default="pending")
+    notified_accepted: Mapped[bool] = mapped_column(Boolean, default=True)
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
     updated_at: Mapped[datetime] = mapped_column(
         DateTime, default=datetime.utcnow, onupdate=datetime.utcnow

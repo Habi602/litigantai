@@ -83,6 +83,23 @@ python seed_marketplace.py
 6. **SQLAlchemy 2.0 style** — use `Mapped[type]` and `mapped_column()`, not legacy `Column()`
 7. **Pydantic v2 style** — use `model_config = ConfigDict(...)`, not `class Config:`
 8. **JSX apostrophes** — use `&apos;` not `'` inside JSX text content (Next.js lint rule)
+9. **SQLite column migrations** — `Base.metadata.create_all()` only creates missing tables, it does NOT add new columns to existing ones. After adding a `Mapped[]` field, run: `python -c "import sqlite3; c=sqlite3.connect('storage.db'); c.execute('ALTER TABLE <t> ADD COLUMN <col> <type> DEFAULT <val>'); c.commit()"`
+10. **Drag-and-drop ref pattern** — never mutate a ref inside a `setState` updater (side-effect, may run multiple times in StrictMode). Capture `from = ref.current`, update `ref.current = target` *before* calling setState, then use the captured `from` in the pure updater.
+11. **File download auth** — endpoints served as direct browser links (e.g. PDF downloads) cannot use `Depends(get_current_user)` — it only reads the `Authorization` header, which browsers don't send on `<a href>` navigation. Instead, accept `token: str = Query(...)` and call `get_user_from_token(token, db)` directly.
+
+## Useful Commands
+
+```bash
+# TypeScript type-check (no npm required)
+/opt/homebrew/bin/node frontend/node_modules/typescript/bin/tsc --noEmit
+
+# Verify backend routes / schemas inline
+cd backend && source venv/bin/activate && python -c "from app.routers.bundles import router; print([r.path for r in router.routes])"
+
+# Check if dev servers are already running before starting them
+lsof -i :3000   # frontend
+lsof -i :8000   # backend
+```
 
 ## Bundling Utility (`/bundling/`)
 
@@ -92,6 +109,19 @@ python seed_marketplace.py
 - `bundling/bundle_pdfs.py` — PDF assembly via `pypdf` + `reportlab`: styled index page, per-page footers, link annotations
 
 This app is **not called by the main backend**. The main backend has its own bundle service (`backend/app/services/bundle_service.py`).
+
+## After Making Changes
+
+After completing any code change, always restart both dev servers:
+```bash
+# Kill existing servers
+pkill -f "uvicorn app.main:app" 2>/dev/null; pkill -f "next dev" 2>/dev/null
+# Restart backend
+cd /Users/israelrussell/Desktop/litigantai/backend && source venv/bin/activate && uvicorn app.main:app --reload &
+# Restart frontend
+cd /Users/israelrussell/Desktop/litigantai/frontend && PATH="/opt/homebrew/bin:$PATH" npm run dev &
+```
+This prevents stale hot-reload state (e.g. React hooks order errors) from masking real bugs.
 
 ## Learning from Corrections
 

@@ -41,7 +41,7 @@ export default function MatchesPage() {
           </p>
           <Link
             href="/specialist/profile"
-            className="inline-block mt-4 text-sm text-indigo-600 hover:text-indigo-700 font-medium"
+            className="inline-block mt-4 text-sm text-blue-700 hover:text-blue-800 font-medium"
           >
             Edit Profile
           </Link>
@@ -64,7 +64,7 @@ export default function MatchesPage() {
                           expandedId === match.id ? null : match.id
                         )
                       }
-                      className="text-xs text-indigo-600 hover:text-indigo-700 font-medium"
+                      className="text-xs text-blue-700 hover:text-blue-800 font-medium"
                     >
                       {expandedId === match.id
                         ? "Hide AI rationale"

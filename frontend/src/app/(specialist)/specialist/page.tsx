@@ -49,7 +49,7 @@ export default function SpecialistDashboard() {
             className={cn(
               "px-4 py-2.5 text-sm font-medium border-b-2 transition-colors -mb-px",
               tab === t.key
-                ? "border-indigo-600 text-indigo-600"
+                ? "border-blue-700 text-blue-700"
                 : "border-transparent text-gray-500 hover:text-gray-700"
             )}
           >
@@ -77,7 +77,7 @@ export default function SpecialistDashboard() {
                 </p>
                 <Link
                   href="/specialist/opportunities"
-                  className="inline-block mt-4 text-sm text-indigo-600 hover:text-indigo-700 font-medium"
+                  className="inline-block mt-4 text-sm text-blue-700 hover:text-blue-800 font-medium"
                 >
                   Browse Opportunities
                 </Link>
@@ -119,7 +119,7 @@ export default function SpecialistDashboard() {
                 </p>
                 <Link
                   href="/specialist/opportunities"
-                  className="inline-block mt-4 text-sm text-indigo-600 hover:text-indigo-700 font-medium"
+                  className="inline-block mt-4 text-sm text-blue-700 hover:text-blue-800 font-medium"
                 >
                   Browse Opportunities
                 </Link>

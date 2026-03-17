@@ -11,6 +11,7 @@ class Bundle(Base):
     id: Mapped[int] = mapped_column(primary_key=True, index=True)
     case_id: Mapped[int] = mapped_column(Integer, ForeignKey("cases.id"), index=True)
     title: Mapped[str] = mapped_column(String(300))
+    version: Mapped[int] = mapped_column(Integer, default=1)
     status: Mapped[str] = mapped_column(String(20), default="draft")
     file_path: Mapped[Optional[str]] = mapped_column(String(500), nullable=True)
     file_size: Mapped[int] = mapped_column(Integer, default=0)

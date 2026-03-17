@@ -143,7 +143,7 @@ export function SpecialistProfileForm({
                         addCustomArea();
                       }
                     }}
-                    className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                   <button
                     type="button"
@@ -190,7 +190,7 @@ export function SpecialistProfileForm({
                     min="0"
                     value={yearsExperience}
                     onChange={(e) => setYearsExperience(parseInt(e.target.value) || 0)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
                 <div>
@@ -204,7 +204,7 @@ export function SpecialistProfileForm({
                     placeholder="e.g. 250.00"
                     value={hourlyRate}
                     onChange={(e) => setHourlyRate(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
               </div>
@@ -218,7 +218,7 @@ export function SpecialistProfileForm({
                     placeholder="Optional"
                     value={barNumber}
                     onChange={(e) => setBarNumber(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
                 <div>
@@ -230,7 +230,7 @@ export function SpecialistProfileForm({
                     placeholder="e.g. England & Wales"
                     value={jurisdiction}
                     onChange={(e) => setJurisdiction(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
               </div>
@@ -250,7 +250,7 @@ export function SpecialistProfileForm({
                   placeholder="Describe your experience, specializations, and approach..."
                   value={bio}
                   onChange={(e) => setBio(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
               <div>
@@ -262,7 +262,7 @@ export function SpecialistProfileForm({
                   placeholder="https://linkedin.com/in/..."
                   value={linkedinUrl}
                   onChange={(e) => setLinkedinUrl(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
             </div>
@@ -274,7 +274,7 @@ export function SpecialistProfileForm({
             <select
               value={availability}
               onChange={(e) => setAvailability(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               {AVAILABILITY_OPTIONS.map((opt) => (
                 <option key={opt} value={opt}>
@@ -309,7 +309,7 @@ export function SpecialistProfileForm({
                   ref={fileInputRef}
                   type="file"
                   onChange={(e) => setUploadFile(e.target.files?.[0] || null)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
               <div className="flex-1">
@@ -318,14 +318,14 @@ export function SpecialistProfileForm({
                   placeholder="Description (optional)"
                   value={uploadDescription}
                   onChange={(e) => setUploadDescription(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
               <button
                 type="button"
                 onClick={handleUpload}
                 disabled={!uploadFile || uploading}
-                className="px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-700 disabled:opacity-50 transition-colors"
+                className="px-4 py-2 bg-blue-700 text-white rounded-lg text-sm font-medium hover:bg-blue-800 disabled:opacity-50 transition-colors"
               >
                 {uploading ? "Uploading..." : "Upload"}
               </button>
@@ -342,7 +342,7 @@ export function SpecialistProfileForm({
                       <span className="text-gray-400">📎</span>
                       <span className="truncate text-gray-800">{doc.original_filename}</span>
                       {doc.category === "cv" && (
-                        <span className="text-xs bg-indigo-100 text-indigo-700 px-1.5 py-0.5 rounded">
+                        <span className="text-xs bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded">
                           CV
                         </span>
                       )}

@@ -79,6 +79,7 @@ export interface Bundle {
   id: number;
   case_id: number;
   title: string;
+  version: number;
   status: string;
   file_path: string | null;
   file_size: number;
@@ -363,4 +364,40 @@ export interface LoginRequest {
 export interface TokenResponse {
   access_token: string;
   token_type: string;
+}
+
+// --- Messaging types ---
+
+export interface Conversation {
+  id: number;
+  participant_1_id: number;
+  participant_2_id: number;
+  case_id: number | null;
+  listing_id: number | null;
+  created_at: string;
+  last_message_at: string | null;
+  other_user_id: number;
+  other_user_name: string;
+  last_message_text: string;
+  unread_count: number;
+}
+
+export interface Message {
+  id: number;
+  conversation_id: number;
+  sender_id: number;
+  sender_name: string;
+  content: string;
+  is_read: boolean;
+  created_at: string;
+}
+
+export interface MessageCreate {
+  content: string;
+}
+
+export interface ConversationCreate {
+  recipient_id: number;
+  case_id?: number | null;
+  listing_id?: number | null;
 }

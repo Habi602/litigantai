@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/Badge";
 const typeColors: Record<string, string> = {
   communication: "bg-blue-500",
   meeting: "bg-purple-500",
-  filing: "bg-indigo-500",
+  filing: "bg-blue-600",
   payment: "bg-green-500",
   agreement: "bg-teal-500",
   incident: "bg-red-500",

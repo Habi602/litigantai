@@ -168,6 +168,26 @@ export function useLawyerProfiles() {
   return { profiles, loading, error, fetchProfiles };
 }
 
+export function useUnreadMatchCount() {
+  const [count, setCount] = useState(0);
+  useEffect(() => {
+    api.get<{ count: number }>("/marketplace/unread-match-count")
+      .then((r) => setCount(r.count))
+      .catch(() => {});
+  }, []);
+  return count;
+}
+
+export function useUnreadAcceptedCount() {
+  const [count, setCount] = useState(0);
+  useEffect(() => {
+    api.get<{ count: number }>("/marketplace/unread-accepted-count")
+      .then((r) => setCount(r.count))
+      .catch(() => {});
+  }, []);
+  return count;
+}
+
 export function useListingDetail(listingId: number) {
   const [listing, setListing] = useState<MarketplaceListing | null>(null);
   const [bids, setBids] = useState<Bid[]>([]);

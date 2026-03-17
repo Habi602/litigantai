@@ -148,7 +148,7 @@ export default function SpecialistCaseDetailPage() {
               onClick={() => setActiveTab(tab.key)}
               className={`pb-3 text-sm font-medium border-b-2 transition-colors ${
                 activeTab === tab.key
-                  ? "border-indigo-600 text-indigo-600"
+                  ? "border-blue-700 text-blue-700"
                   : "border-transparent text-gray-500 hover:text-gray-700"
               }`}
             >
