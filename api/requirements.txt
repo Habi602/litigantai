@@ -1,0 +1,14 @@
+fastapi
+uvicorn[standard]
+sqlalchemy
+pydantic
+pydantic-settings
+python-jose[cryptography]
+passlib[bcrypt]
+python-multipart
+PyPDF2
+reportlab
+anthropic
+mangum
+psycopg2-binary
+bcrypt

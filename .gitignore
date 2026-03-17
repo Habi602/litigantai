@@ -31,3 +31,14 @@ Thumbs.db
 .idea/
 *.swp
 *.swo
+
+# Secrets
+keys.json
+
+# Claude / agent internals
+.claude/
+.agents/
+skills-lock.json
+
+# Scratch files
+hello.py
