@@ -9,6 +9,22 @@ Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="LitigantAI API", version="1.0.0")
 
+
+@app.on_event("startup")
+def auto_seed():
+    """Seed demo data on first boot (if no users exist)."""
+    from app.database import SessionLocal
+    from app.models import User
+    db = SessionLocal()
+    try:
+        if db.query(User).count() == 0:
+            from seed_marketplace import seed_marketplace
+            seed_marketplace()
+    except Exception:
+        pass
+    finally:
+        db.close()
+
 _origins = [o.strip() for o in settings.ALLOWED_ORIGINS.split(",")]
 app.add_middleware(
     CORSMiddleware,
