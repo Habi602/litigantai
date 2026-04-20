@@ -123,6 +123,15 @@ cd /Users/israelrussell/Desktop/litigantai/frontend && PATH="/opt/homebrew/bin:$
 ```
 This prevents stale hot-reload state (e.g. React hooks order errors) from masking real bugs.
 
+## Infrastructure & Deployments — Always Use MCPs or curl
+
+Never ask the user to perform infrastructure actions manually. Always use the available tools directly:
+
+- **Render** — use the Render REST API (`curl -H "Authorization: Bearer rnd_Heqor7Kwhe0caa1i3GjO8UqJKBAr" https://api.render.com/v1/...`) to read services, update env vars, trigger deploys, fetch logs. Service ID: `srv-d7j3cupo3t8c73b3pbpg`. Owner ID: `tea-d7j2v6rbc2fs739ctrog`. Note: `PUT /env-vars` replaces ALL vars — always send the full set.
+- **Supabase** — use `mcp__supabase__*` tools (execute_sql, list_tables, apply_migration, etc.). Access token: `sbp_9b6e8f3217ad3d8cd837c8ac73e3b47db8c153d7`. **Active project**: `vefddovtoguhggmplqac` (eu-west-1, has IPv4 pooler). Pooler URL: `postgresql://postgres.vefddovtoguhggmplqac:moshiach770@aws-0-eu-west-1.pooler.supabase.com:6543/postgres`. Old project `sdltcwvlcvxqanrprayv` (eu-central-2) is abandoned — no IPv4 pooler support.
+- **Vercel** — use `mcp__vercel__*` tools (list_projects, get_project, list_deployments, deploy_to_vercel, etc.). Team ID: `team_aEn9FarMOLzMKuMSBtETh0Et`. Frontend project: `marketplace` (`prj_gyWJjz2K5zS0yjr5qtjt8YoADd5a`) at `https://marketplace-lovat-ten.vercel.app`.
+- **GitHub** — use `git push https://Habi602:TOKEN@github.com/Habi602/litigantai.git` for the deployment repo. Always push to `Habi602/litigantai` for production. The `origin` remote points to `israelrussell80-del/litigantai` (dev). Render deploys from `Habi602/litigantai`, `backend` branch, `rootDir=backend`.
+
 ## Learning from Corrections
 
 Treat every correction as a permanent rule for this project. If told "don't do X," that applies to all future work, not just the current task.
