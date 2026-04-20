@@ -3,6 +3,8 @@ from sqlalchemy.orm import Session
 
 from app.database import get_db
 from app.models.user import User
+from app.models.litigant_profile import LitigantProfile
+from app.models.marketplace import SpecialistProfile
 from app.schemas.auth import Token, LoginRequest, UserCreate, UserResponse
 from app.services.auth import hash_password, verify_password, create_access_token, get_current_user
 
@@ -29,12 +31,21 @@ def register(payload: UserCreate, db: Session = Depends(get_db)):
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Username already registered",
         )
+    role = payload.role if payload.role in ("litigant", "specialist") else "litigant"
     user = User(
         username=payload.username,
         hashed_password=hash_password(payload.password),
         full_name=payload.full_name,
+        role=role,
     )
     db.add(user)
+    db.flush()
+
+    if role == "litigant":
+        db.add(LitigantProfile(user_id=user.id))
+    else:
+        db.add(SpecialistProfile(user_id=user.id))
+
     db.commit()
     db.refresh(user)
     return user

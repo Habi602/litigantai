@@ -14,6 +14,7 @@ class User(Base):
     username: Mapped[str] = mapped_column(String(50), unique=True, index=True)
     hashed_password: Mapped[str] = mapped_column(String(255))
     full_name: Mapped[str] = mapped_column(String(100), default="")
+    role: Mapped[str] = mapped_column(String(20), default="litigant")
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
 
@@ -21,5 +22,11 @@ class User(Base):
         back_populates="user", uselist=False
     )
     specialist_documents: Mapped[list["SpecialistDocument"]] = relationship(
+        back_populates="user", cascade="all, delete-orphan"
+    )
+    litigant_profile: Mapped[Optional["LitigantProfile"]] = relationship(
+        back_populates="user", uselist=False
+    )
+    notifications: Mapped[list["Notification"]] = relationship(
         back_populates="user", cascade="all, delete-orphan"
     )

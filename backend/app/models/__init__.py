@@ -8,6 +8,10 @@ from app.models.marketplace import SpecialistProfile, SpecialistDocument, Market
 from app.models.legal_analysis import CaseLegalAnalysis, EvidenceAnalysisGap
 from app.models.collaboration import CaseCollaborator, CaseNote, CaseDocument
 from app.models.statement_of_claim import StatementOfClaim
+from app.models.litigant_profile import LitigantProfile
+from app.models.notification import Notification
+from app.models.payment import Payment, Invoice
+from app.models.audit_log import AuditLog
 
 __all__ = [
     "User",
@@ -17,4 +21,8 @@ __all__ = [
     "CaseLegalAnalysis", "EvidenceAnalysisGap",
     "CaseCollaborator", "CaseNote", "CaseDocument",
     "StatementOfClaim",
+    "LitigantProfile",
+    "Notification",
+    "Payment", "Invoice",
+    "AuditLog",
 ]

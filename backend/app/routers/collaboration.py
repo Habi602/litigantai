@@ -13,8 +13,11 @@ from app.schemas.collaboration import (
     CaseNoteResponse,
     CaseDocumentResponse,
 )
+from app.models.case import Case
 from app.services.auth import get_current_user
 from app.services.collaboration_service import can_access_case
+from app.services.notification_service import create_notification
+from app.services.audit_service import log_action
 
 router = APIRouter(tags=["collaboration"])
 
@@ -60,6 +63,29 @@ def list_collaborators(
     return [_collaborator_to_response(c, db) for c in collaborators]
 
 
+@router.delete("/cases/{case_id}/collaborators/{user_id}", status_code=status.HTTP_204_NO_CONTENT)
+def remove_collaborator(
+    case_id: int,
+    user_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    case = db.query(Case).filter(Case.id == case_id, Case.user_id == current_user.id).first()
+    if not case:
+        raise HTTPException(status_code=403, detail="Not authorized to manage this case")
+    collab = (
+        db.query(CaseCollaborator)
+        .filter(CaseCollaborator.case_id == case_id, CaseCollaborator.user_id == user_id)
+        .first()
+    )
+    if not collab:
+        raise HTTPException(status_code=404, detail="Collaborator not found")
+    log_action(db, entity_type="case_collaborator", entity_id=collab.id, action="deleted",
+               user_id=current_user.id, detail={"removed_user_id": user_id})
+    db.delete(collab)
+    db.commit()
+
+
 # --- Notes ---
 
 @router.get("/cases/{case_id}/notes", response_model=list[CaseNoteResponse])
@@ -97,6 +123,21 @@ def create_note(
         note_type=payload.note_type,
     )
     db.add(note)
+    db.flush()
+
+    # Notify the case owner if a specialist (collaborator) left the note
+    case = db.query(Case).filter(Case.id == case_id).first()
+    if case and case.user_id != current_user.id:
+        create_notification(
+            db,
+            user_id=case.user_id,
+            type="new_note",
+            title="Your specialist left a note on your case",
+            body=payload.content[:200],
+            entity_type="case",
+            entity_id=case_id,
+        )
+
     db.commit()
     db.refresh(note)
     return _note_to_response(note, db)

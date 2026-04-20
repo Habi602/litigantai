@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, status
+from fastapi import APIRouter, Depends, HTTPException, Request, UploadFile, File, status
 from fastapi.responses import FileResponse
 from sqlalchemy.orm import Session
 from pathlib import Path
@@ -10,6 +10,7 @@ from app.schemas.evidence import EvidenceResponse, EvidenceDetailResponse
 from app.services.auth import get_current_user
 from app.services.collaboration_service import can_access_case
 from app.services import file_service
+from app.services.audit_service import log_action
 from app.config import settings
 
 router = APIRouter(prefix="/cases/{case_id}/evidence", tags=["evidence"])
@@ -49,6 +50,7 @@ def list_evidence(
 
 @router.post("/", response_model=list[EvidenceResponse], status_code=status.HTTP_201_CREATED)
 async def upload_evidence(
+    request: Request,
     case_id: int,
     files: list[UploadFile] = File(...),
     db: Session = Depends(get_db),
@@ -87,6 +89,9 @@ async def upload_evidence(
     db.commit()
     for e in created:
         db.refresh(e)
+        log_action(db, entity_type="evidence", entity_id=e.id, action="created",
+                   user_id=current_user.id, ip=request.client.host if request.client else None)
+    db.commit()
     return created
 
 
@@ -110,6 +115,7 @@ def get_evidence(
 
 @router.delete("/{evidence_id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_evidence(
+    request: Request,
     case_id: int,
     evidence_id: int,
     db: Session = Depends(get_db),
@@ -123,6 +129,9 @@ def delete_evidence(
     )
     if not evidence:
         raise HTTPException(status_code=404, detail="Evidence not found")
+    log_action(db, entity_type="evidence", entity_id=evidence_id, action="deleted",
+               user_id=current_user.id, detail={"filename": evidence.filename},
+               ip=request.client.host if request.client else None)
     file_service.delete_file(evidence.file_path)
     db.delete(evidence)
     db.commit()

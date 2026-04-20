@@ -6,6 +6,8 @@ from app.config import settings
 from app.models.evidence import Evidence
 from app.models.key_fact import KeyFact
 from app.models.timeline_event import TimelineEvent
+from app.models.collaboration import CaseNote
+from app.models.case import Case
 
 MAX_TEXT_LENGTH = 50000
 MODEL = "claude-sonnet-4-20250514"
@@ -66,6 +68,17 @@ def analyze_evidence(evidence: Evidence, db: Session) -> None:
             )
             db.add(event)
 
+        facts_count = len(result.get("key_facts", []))
+        events_count = len(result.get("timeline_events", []))
+        case = db.query(Case).filter(Case.id == evidence.case_id).first()
+        if case:
+            db.add(CaseNote(
+                case_id=evidence.case_id,
+                user_id=case.user_id,
+                evidence_id=evidence.id,
+                content=f"AI analysis complete: extracted {facts_count} key fact(s) and {events_count} timeline event(s) from '{evidence.filename}'.",
+                note_type="note",
+            ))
         db.commit()
 
     except Exception as e:

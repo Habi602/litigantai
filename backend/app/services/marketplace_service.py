@@ -5,7 +5,9 @@ from app.models.evidence import Evidence
 from app.models.key_fact import KeyFact
 from app.models.marketplace import SpecialistProfile, MarketplaceListing, CaseMatch, Bid
 from app.models.collaboration import CaseCollaborator
+from app.models.messaging import Conversation
 from app.services.ai_service import _get_client, _parse_json_response, MODEL
+from app.services.notification_service import create_notification
 
 
 def generate_redacted_summary(db: Session, case: Case) -> dict:
@@ -126,14 +128,28 @@ def match_specialists(db: Session, listing: MarketplaceListing) -> list[CaseMatc
                 specialist_id=profile.user_id,
                 relevance_score=score_data.get("relevance_score", 0.0),
                 rationale=score_data.get("rationale", ""),
-                notified=False,
+                notified=True,
             )
             db.add(match)
-            matches.append(match)
+            matches.append((match, profile.user_id))
         except Exception:
             continue
 
+    db.flush()
+
+    for match, specialist_id in matches:
+        create_notification(
+            db,
+            user_id=specialist_id,
+            type="match_found",
+            title="You&apos;ve been matched to a new case",
+            body=f"A case listing matches your practice areas: {listing.title}",
+            entity_type="listing",
+            entity_id=listing.id,
+        )
+
     db.commit()
+    matches = [m for m, _ in matches]
 
     # Sort by relevance score descending
     matches.sort(key=lambda m: m.relevance_score, reverse=True)
@@ -198,7 +214,16 @@ def submit_bid(db: Session, listing_id: int, specialist_id: int, data: dict) -> 
     if not profile or not profile.bio.strip() or not profile.practice_areas:
         raise ValueError("Please complete your profile (bio and practice areas) before bidding")
 
-    # Check for existing bid
+    # Block re-bid after withdrawal
+    withdrawn_bid = (
+        db.query(Bid)
+        .filter(Bid.listing_id == listing_id, Bid.specialist_id == specialist_id, Bid.status == "withdrawn")
+        .first()
+    )
+    if withdrawn_bid:
+        raise ValueError("You have already withdrawn a bid on this listing")
+
+    # Check for existing pending bid
     existing_bid = (
         db.query(Bid)
         .filter(Bid.listing_id == listing_id, Bid.specialist_id == specialist_id, Bid.status == "pending")
@@ -220,6 +245,18 @@ def submit_bid(db: Session, listing_id: int, specialist_id: int, data: dict) -> 
 
     if listing.status == "published":
         listing.status = "matched"
+
+    db.flush()
+
+    create_notification(
+        db,
+        user_id=listing.user_id,
+        type="bid_received",
+        title="A specialist has placed a bid on your listing",
+        body=f"You have a new bid on: {listing.title}",
+        entity_type="listing",
+        entity_id=listing.id,
+    )
 
     db.commit()
     db.refresh(bid)
@@ -251,7 +288,7 @@ def accept_bid(db: Session, bid_id: int, user_id: int) -> Bid:
     )
     db.add(collaborator)
 
-    # Reject all other pending bids
+    # Reject all other pending bids and notify them
     other_bids = (
         db.query(Bid)
         .filter(Bid.listing_id == bid.listing_id, Bid.id != bid_id, Bid.status == "pending")
@@ -261,6 +298,49 @@ def accept_bid(db: Session, bid_id: int, user_id: int) -> Bid:
         other.status = "rejected"
 
     listing.status = "accepted"
+    db.flush()
+
+    # Notify accepted specialist
+    create_notification(
+        db,
+        user_id=bid.specialist_id,
+        type="bid_accepted",
+        title="Your bid has been accepted",
+        body=f"Your bid on '{listing.title}' has been accepted. You now have access to the case.",
+        entity_type="bid",
+        entity_id=bid.id,
+    )
+
+    # Notify rejected specialists
+    for other in other_bids:
+        create_notification(
+            db,
+            user_id=other.specialist_id,
+            type="bid_rejected",
+            title="Your bid was not selected",
+            body=f"The litigant has selected another specialist for: {listing.title}",
+            entity_type="bid",
+            entity_id=other.id,
+        )
+
+    # Auto-open conversation between litigant and accepted specialist
+    existing_convo = (
+        db.query(Conversation)
+        .filter(
+            Conversation.case_id == listing.case_id,
+            Conversation.participant_1_id == listing.user_id,
+            Conversation.participant_2_id == bid.specialist_id,
+        )
+        .first()
+    )
+    if not existing_convo:
+        db.add(Conversation(
+            participant_1_id=listing.user_id,
+            participant_2_id=bid.specialist_id,
+            case_id=listing.case_id,
+            listing_id=listing.id,
+        ))
+
     db.commit()
     db.refresh(bid)
     return bid

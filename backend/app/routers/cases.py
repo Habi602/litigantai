@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Request, status
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 from app.database import get_db
@@ -10,6 +10,7 @@ from app.schemas.case import CaseCreate, CaseUpdate, CaseResponse
 from app.schemas.evidence import KeyFactResponse
 from app.services.auth import get_current_user
 from app.services.collaboration_service import can_access_case
+from app.services.audit_service import log_action
 
 
 class FactTextUpdate(BaseModel):
@@ -88,6 +89,7 @@ def update_case(
 
 @router.delete("/{case_id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_case(
+    request: Request,
     case_id: int,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
@@ -95,6 +97,9 @@ def delete_case(
     case = db.query(Case).filter(Case.id == case_id, Case.user_id == current_user.id).first()
     if not case:
         raise HTTPException(status_code=404, detail="Case not found")
+    log_action(db, entity_type="case", entity_id=case_id, action="deleted",
+               user_id=current_user.id, detail={"title": case.title},
+               ip=request.client.host if request.client else None)
     db.delete(case)
     db.commit()
 

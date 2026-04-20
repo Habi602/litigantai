@@ -103,3 +103,4 @@ class Bid(Base):
     )
 
     listing: Mapped["MarketplaceListing"] = relationship(back_populates="bids")
+    payment: Mapped[Optional["Payment"]] = relationship(back_populates="bid", uselist=False)

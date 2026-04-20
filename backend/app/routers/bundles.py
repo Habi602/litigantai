@@ -29,6 +29,7 @@ from app.schemas.bundle import (
 )
 from app.services import bundle_service
 from app.services.auth import get_current_user, get_user_from_token
+from app.services.audit_service import log_action
 
 router = APIRouter(prefix="/cases/{case_id}/bundles", tags=["bundles"])
 
@@ -78,6 +79,9 @@ def create_bundle(
     bundle = bundle_service.create_bundle(
         db, case_id, payload.title, payload.evidence_ids
     )
+    log_action(db, entity_type="bundle", entity_id=bundle.id, action="created",
+               user_id=current_user.id, detail={"title": bundle.title, "pages": bundle.total_pages})
+    db.commit()
     return bundle
 
 
@@ -178,6 +182,9 @@ def get_bundle_file(
     bundle = _get_bundle(case_id, bundle_id, current_user, db)
     if not bundle.file_path or not os.path.exists(bundle.file_path):
         raise HTTPException(status_code=404, detail="Bundle PDF not found")
+    log_action(db, entity_type="bundle", entity_id=bundle_id, action="downloaded",
+               user_id=current_user.id)
+    db.commit()
     return FileResponse(
         bundle.file_path,
         media_type="application/pdf",

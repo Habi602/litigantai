@@ -1,7 +1,10 @@
 from io import BytesIO
 
-from pypdf import PdfReader, PdfWriter
-from pypdf.annotations import Link
+try:
+    from pypdf import PdfReader, PdfWriter
+    from pypdf.annotations import Link
+except ImportError:
+    PdfReader = PdfWriter = Link = None
 from reportlab.lib import colors
 from reportlab.lib.colors import HexColor
 from reportlab.lib.pagesizes import LETTER

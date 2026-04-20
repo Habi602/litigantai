@@ -47,3 +47,4 @@ class Case(Base):
     statement_of_claim: Mapped[Optional["StatementOfClaim"]] = relationship(
         back_populates="case", uselist=False, cascade="all, delete-orphan"
     )
+    invoices: Mapped[list["Invoice"]] = relationship(back_populates="case")

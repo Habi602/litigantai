@@ -4,9 +4,13 @@ import os
 from datetime import datetime
 from pathlib import Path
 
-import PyPDF2
-from PyPDF2.generic import ArrayObject
-from PIL import Image
+try:
+    import PyPDF2
+    from PyPDF2.generic import ArrayObject
+    from PIL import Image
+    _PDF_AVAILABLE = True
+except ImportError:
+    _PDF_AVAILABLE = False
 from sqlalchemy.orm import Session
 
 from app.config import settings

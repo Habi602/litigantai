@@ -277,12 +277,25 @@ def withdraw_bid(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
+    from app.services.notification_service import create_notification
     bid = db.query(Bid).filter(Bid.id == bid_id, Bid.specialist_id == current_user.id).first()
     if not bid:
         raise HTTPException(status_code=404, detail="Bid not found")
     if bid.status != "pending":
         raise HTTPException(status_code=400, detail="Can only withdraw pending bids")
     bid.status = "withdrawn"
+    listing = db.query(MarketplaceListing).filter(MarketplaceListing.id == bid.listing_id).first()
+    db.flush()
+    if listing:
+        create_notification(
+            db,
+            user_id=listing.user_id,
+            type="bid_withdrawn",
+            title="A specialist withdrew their bid",
+            body=f"A specialist has withdrawn their bid on: {listing.title}",
+            entity_type="bid",
+            entity_id=bid.id,
+        )
     db.commit()
     db.refresh(bid)
     return _bid_to_response(bid, db)

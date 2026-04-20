@@ -22,12 +22,14 @@ class UserCreate(BaseModel):
     username: str
     password: str
     full_name: str = ""
+    role: str = "litigant"  # "litigant" or "specialist"
 
 
 class UserResponse(BaseModel):
     id: int
     username: str
     full_name: str
+    role: str
     is_active: bool
     created_at: datetime
 
